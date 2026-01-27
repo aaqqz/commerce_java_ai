@@ -1,13 +1,8 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.api.plugins.JavaPluginExtension
 
 plugins {
-    kotlin("jvm")
-    kotlin("kapt")
-    kotlin("plugin.spring") apply false
-    kotlin("plugin.jpa") apply false
     id("org.springframework.boot") apply false
     id("io.spring.dependency-management")
-    id("org.jlleitschuh.gradle.ktlint") apply false
 }
 
 java.sourceCompatibility = JavaVersion.valueOf("VERSION_${property("javaVersion")}")
@@ -22,13 +17,9 @@ allprojects {
 }
 
 subprojects {
-    apply(plugin = "org.jetbrains.kotlin.jvm")
-    apply(plugin = "org.jetbrains.kotlin.kapt")
-    apply(plugin = "org.jetbrains.kotlin.plugin.spring")
-    apply(plugin = "org.jetbrains.kotlin.plugin.jpa")
+    apply(plugin = "java")
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     dependencyManagement {
         imports {
@@ -37,13 +28,8 @@ subprojects {
     }
 
     dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-reflect")
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-        implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
-        testImplementation("com.ninja-squad:springmockk:${property("springMockkVersion")}")
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-        kapt("org.springframework.boot:spring-boot-configuration-processor")
     }
 
     tasks.getByName("bootJar") {
@@ -54,15 +40,15 @@ subprojects {
         enabled = true
     }
 
-    java.sourceCompatibility = JavaVersion.valueOf("VERSION_${property("javaVersion")}")
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "${project.property("javaVersion")}"
-        }
+    extensions.configure<JavaPluginExtension> {
+        sourceCompatibility = JavaVersion.valueOf("VERSION_${property("javaVersion")}")
+        targetCompatibility = JavaVersion.valueOf("VERSION_${property("javaVersion")}")
+    }
+    tasks.withType<JavaCompile> {
+        options.release.set(project.property("javaVersion").toString().toInt())
     }
 
-    tasks.test {
+    tasks.named<Test>("test") {
         useJUnitPlatform {
             excludeTags("develop")
         }

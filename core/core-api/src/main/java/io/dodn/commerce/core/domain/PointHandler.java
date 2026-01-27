@@ -1,0 +1,63 @@
+package io.dodn.commerce.core.domain;
+
+import io.dodn.commerce.core.enums.PointType;
+import io.dodn.commerce.core.support.error.CoreException;
+import io.dodn.commerce.core.support.error.ErrorType;
+import io.dodn.commerce.storage.db.core.PointBalanceEntity;
+import io.dodn.commerce.storage.db.core.PointBalanceRepository;
+import io.dodn.commerce.storage.db.core.PointHistoryEntity;
+import io.dodn.commerce.storage.db.core.PointHistoryRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+
+@Component
+@RequiredArgsConstructor
+public class PointHandler {
+    private final PointBalanceRepository pointBalanceRepository;
+    private final PointHistoryRepository pointHistoryRepository;
+
+    @Transactional
+    public void earn(User user, PointType type, Long targetId, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            return;
+        }
+
+        // NOTE: 모든 유저는 가입 시 Point 테이블 생성
+        PointBalanceEntity balance = pointBalanceRepository.findByUserId(user.getId());
+        if (balance == null) {
+            throw new CoreException(ErrorType.NOT_FOUND_DATA);
+        }
+        balance.apply(amount);
+        pointHistoryRepository.save(new PointHistoryEntity(
+                user.getId(),
+                type,
+                targetId,
+                amount,
+                balance.getBalance()
+        ));
+    }
+
+    @Transactional
+    public void deduct(User user, PointType type, Long targetId, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            return;
+        }
+
+        // NOTE: 모든 유저는 가입 시 Point 테이블 생성
+        PointBalanceEntity balance = pointBalanceRepository.findByUserId(user.getId());
+        if (balance == null) {
+            throw new CoreException(ErrorType.NOT_FOUND_DATA);
+        }
+        balance.apply(amount.negate());
+        pointHistoryRepository.save(new PointHistoryEntity(
+                user.getId(),
+                type,
+                targetId,
+                amount.negate(),
+                balance.getBalance()
+        ));
+    }
+}

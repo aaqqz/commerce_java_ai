@@ -1,0 +1,95 @@
+package io.dodn.commerce.core.domain;
+
+import io.dodn.commerce.core.enums.EntityStatus;
+import io.dodn.commerce.core.support.error.CoreException;
+import io.dodn.commerce.core.support.error.ErrorType;
+import io.dodn.commerce.storage.db.core.CartItemEntity;
+import io.dodn.commerce.storage.db.core.CartItemRepository;
+import io.dodn.commerce.storage.db.core.ProductEntity;
+import io.dodn.commerce.storage.db.core.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class CartService {
+    private final CartItemRepository cartItemRepository;
+    private final ProductRepository productRepository;
+
+    public Cart getCart(User user) {
+        List<CartItemEntity> items = cartItemRepository.findByUserIdAndStatus(user.getId(), EntityStatus.ACTIVE);
+        Map<Long, ProductEntity> productMap = productRepository.findAllById(
+                items.stream().map(CartItemEntity::getProductId).collect(Collectors.toList())
+        ).stream().collect(Collectors.toMap(ProductEntity::getId, p -> p));
+
+        return new Cart(
+                user.getId(),
+                items.stream()
+                        .filter(it -> productMap.containsKey(it.getProductId()))
+                        .map(it -> {
+                            ProductEntity product = productMap.get(it.getProductId());
+                            return new CartItem(
+                                    it.getId(),
+                                    new Product(
+                                            product.getId(),
+                                            product.getName(),
+                                            product.getThumbnailUrl(),
+                                            product.getDescription(),
+                                            product.getShortDescription(),
+                                            new Price(
+                                                    product.getCostPrice(),
+                                                    product.getSalesPrice(),
+                                                    product.getDiscountedPrice()
+                                            )
+                                    ),
+                                    it.getQuantity()
+                            );
+                        })
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @Transactional
+    public Long addCartItem(User user, AddCartItem item) {
+        CartItemEntity existing = cartItemRepository.findByUserIdAndProductId(user.getId(), item.getProductId());
+        if (existing != null) {
+            if (existing.isDeleted()) {
+                existing.active();
+            }
+            existing.applyQuantity(item.getQuantity());
+            return existing.getId();
+        } else {
+            return cartItemRepository.save(new CartItemEntity(
+                    user.getId(),
+                    item.getProductId(),
+                    item.getQuantity()
+            )).getId();
+        }
+    }
+
+    @Transactional
+    public Long modifyCartItem(User user, ModifyCartItem item) {
+        CartItemEntity found = cartItemRepository.findByUserIdAndIdAndStatus(
+                user.getId(), item.getCartItemId(), EntityStatus.ACTIVE);
+        if (found == null) {
+            throw new CoreException(ErrorType.NOT_FOUND_DATA);
+        }
+        found.applyQuantity(item.getQuantity());
+        return found.getId();
+    }
+
+    @Transactional
+    public void deleteCartItem(User user, Long cartItemId) {
+        CartItemEntity entity = cartItemRepository.findByUserIdAndIdAndStatus(
+                user.getId(), cartItemId, EntityStatus.ACTIVE);
+        if (entity == null) {
+            throw new CoreException(ErrorType.NOT_FOUND_DATA);
+        }
+        entity.delete();
+    }
+}
