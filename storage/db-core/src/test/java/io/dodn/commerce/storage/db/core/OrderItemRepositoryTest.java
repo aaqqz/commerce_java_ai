@@ -32,7 +32,7 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
 
         // 포함 대상: 해당 유저, PAID, ACTIVE, fromDate 이후, 해당 상품
         OrderEntity includedOrder = orderRepository.save(
-                new OrderEntity(
+                OrderEntity.create(
                         userId,
                         "ORDER_KEY_INCLUDED",
                         "Included Order",
@@ -55,7 +55,7 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
 
         // 동일 조건이지만 다른 유저
         OrderEntity otherUserOrder = orderRepository.save(
-                new OrderEntity(
+                OrderEntity.create(
                         200L,
                         "ORDER_KEY_OTHER_USER",
                         "Other User Order",
@@ -78,7 +78,7 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
 
         // 동일 유저지만 CREATED 상태
         OrderEntity createdOrder = orderRepository.save(
-                new OrderEntity(
+                OrderEntity.create(
                         userId,
                         "ORDER_KEY_CREATED",
                         "Created Order",
@@ -101,7 +101,7 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
 
         // 동일 유저, PAID지만 주문이 삭제됨
         OrderEntity deletedOrder = orderRepository.save(
-                new OrderEntity(
+                OrderEntity.create(
                         userId,
                         "ORDER_KEY_DELETED",
                         "Deleted Order",
@@ -126,7 +126,7 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
 
         // 동일 유저, PAID지만 아이템이 삭제됨
         OrderEntity orderForDeletedItem = orderRepository.save(
-                new OrderEntity(
+                OrderEntity.create(
                         userId,
                         "ORDER_KEY_ITEM_DELETED",
                         "Order For Deleted Item",
@@ -151,7 +151,7 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
 
         // 동일 유저, PAID, ACTIVE지만 다른 상품
         OrderEntity orderOtherProduct = orderRepository.save(
-                new OrderEntity(
+                OrderEntity.create(
                         userId,
                         "ORDER_KEY_OTHER_PRODUCT",
                         "Order Other Product",

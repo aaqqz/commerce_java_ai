@@ -2,14 +2,13 @@ package io.dodn.commerce.storage.db.core.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import lombok.RequiredArgsConstructor;
 
 @Converter
+@RequiredArgsConstructor
 class AesConverter implements AttributeConverter<String, String> {
-    private final AesHelper aesHelper;
 
-    public AesConverter(AesHelper aesHelper) {
-        this.aesHelper = aesHelper;
-    }
+    private final AesHelper aesHelper;
 
     @Override
     public String convertToDatabaseColumn(String attribute) {

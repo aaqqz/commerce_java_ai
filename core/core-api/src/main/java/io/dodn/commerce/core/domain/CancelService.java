@@ -68,7 +68,7 @@ public class CancelService {
         pointHandler.earn(new User(payment.getUserId()), PointType.PAYMENT, payment.getId(), payment.getUsedPoint());
         pointHandler.deduct(new User(payment.getUserId()), PointType.PAYMENT, payment.getId(), PointAmount.PAYMENT);
 
-        CancelEntity cancel = cancelRepository.save(new CancelEntity(
+        CancelEntity cancel = cancelRepository.save(CancelEntity.create(
                 payment.getUserId(),
                 payment.getOrderId(),
                 payment.getId(),

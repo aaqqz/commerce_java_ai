@@ -64,7 +64,7 @@ public class PaymentServiceTest extends ContextTest {
 
         // order in CREATED
         OrderEntity order = orderRepository.save(
-                new OrderEntity(
+                OrderEntity.create(
                         userId,
                         orderKey,
                         "테스트 주문",

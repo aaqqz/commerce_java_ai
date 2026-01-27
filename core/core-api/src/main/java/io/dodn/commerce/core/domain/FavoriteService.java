@@ -45,7 +45,7 @@ public class FavoriteService {
     public Long addFavorite(User user, Long productId) {
         FavoriteEntity existing = favoriteRepository.findByUserIdAndProductId(user.getId(), productId);
         if (existing == null) {
-            FavoriteEntity saved = favoriteRepository.save(new FavoriteEntity(
+            FavoriteEntity saved = favoriteRepository.save(FavoriteEntity.create(
                     user.getId(),
                     productId,
                     LocalDateTime.now()

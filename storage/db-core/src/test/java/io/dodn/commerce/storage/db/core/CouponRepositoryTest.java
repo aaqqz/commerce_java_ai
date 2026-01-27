@@ -36,7 +36,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
 
         // 상품 10에 직접 적용되는 쿠폰
         CouponEntity c1 = couponRepository.save(
-                new CouponEntity(
+                CouponEntity.create(
                         "PRODUCT_ID_10",
                         CouponType.FIXED_AMOUNT,
                         BigDecimal.TEN,
@@ -44,7 +44,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
                 )
         );
         couponTargetRepository.save(
-                new CouponTargetEntity(
+                CouponTargetEntity.create(
                         c1.getId(),
                         CouponTargetType.PRODUCT,
                         10L
@@ -53,7 +53,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
 
         // 카테고리 100에 적용되는 쿠폰, 상품 11은 카테고리 100에 속함
         CouponEntity c2 = couponRepository.save(
-                new CouponEntity(
+                CouponEntity.create(
                         "PRODUCT_CATEGORY_100",
                         CouponType.FIXED_AMOUNT,
                         BigDecimal.ONE,
@@ -61,7 +61,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
                 )
         );
         couponTargetRepository.save(
-                new CouponTargetEntity(
+                CouponTargetEntity.create(
                         c2.getId(),
                         CouponTargetType.PRODUCT_CATEGORY,
                         100L
@@ -76,7 +76,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
 
         // 매치될 수 있지만 삭제(비활성)된 쿠폰
         CouponEntity c3 = couponRepository.save(
-                new CouponEntity(
+                CouponEntity.create(
                         "INACTIVE_COUPON_DELETED",
                         CouponType.FIXED_AMOUNT,
                         BigDecimal.valueOf(5),
@@ -86,7 +86,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
         c3.delete();
         couponRepository.save(c3);
         couponTargetRepository.save(
-                new CouponTargetEntity(
+                CouponTargetEntity.create(
                         c3.getId(),
                         CouponTargetType.PRODUCT,
                         12L
@@ -95,7 +95,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
 
         // 동일 상품에 대해 상품과 카테고리 둘 다 적용되는 쿠폰 (중복 없이 유니크하게 처리되어야 함)
         CouponEntity c4 = couponRepository.save(
-                new CouponEntity(
+                CouponEntity.create(
                         "BOTH_PRODUCT_12_PRODUCT_CATEGORY_200",
                         CouponType.FIXED_AMOUNT,
                         BigDecimal.valueOf(20),
@@ -104,12 +104,12 @@ public class CouponRepositoryTest extends CoreDbContextTest {
         );
         couponTargetRepository.saveAll(
                 Arrays.asList(
-                        new CouponTargetEntity(
+                        CouponTargetEntity.create(
                                 c4.getId(),
                                 CouponTargetType.PRODUCT,
                                 12L
                         ),
-                        new CouponTargetEntity(
+                        CouponTargetEntity.create(
                                 c4.getId(),
                                 CouponTargetType.PRODUCT_CATEGORY,
                                 200L
@@ -125,7 +125,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
 
         // 비활성 타깃은 쿠폰 적용 대상이 아님
         CouponEntity c5 = couponRepository.save(
-                new CouponEntity(
+                CouponEntity.create(
                         "INACTIVE_COUPON_TARGET_DELETED",
                         CouponType.FIXED_AMOUNT,
                         BigDecimal.valueOf(7),
@@ -133,7 +133,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
                 )
         );
         CouponTargetEntity inactiveTarget = couponTargetRepository.save(
-                new CouponTargetEntity(
+                CouponTargetEntity.create(
                         c5.getId(),
                         CouponTargetType.PRODUCT,
                         13L
@@ -144,7 +144,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
 
         // 쿠폰만 존재하는 데이터
         couponRepository.save(
-                new CouponEntity(
+                CouponEntity.create(
                         "NOT_MATCH_PRODUCT",
                         CouponType.FIXED_AMOUNT,
                         BigDecimal.ONE,

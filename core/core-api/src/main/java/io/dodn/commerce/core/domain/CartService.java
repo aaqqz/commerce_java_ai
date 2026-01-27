@@ -64,7 +64,7 @@ public class CartService {
             existing.applyQuantity(item.getQuantity());
             return existing.getId();
         } else {
-            return cartItemRepository.save(new CartItemEntity(
+            return cartItemRepository.save(CartItemEntity.create(
                     user.getId(),
                     item.getProductId(),
                     item.getQuantity()

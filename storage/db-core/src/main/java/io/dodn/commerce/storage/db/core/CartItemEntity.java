@@ -6,19 +6,22 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @Table(name = "cart_item")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CartItemEntity extends BaseEntity {
     private Long userId;
     private Long productId;
     private Long quantity;
 
-    public CartItemEntity(Long userId, Long productId, Long quantity) {
-        this.userId = userId;
-        this.productId = productId;
-        this.quantity = quantity;
+    public static CartItemEntity create(Long userId, Long productId, Long quantity) {
+        CartItemEntity cartItem = new CartItemEntity();
+        cartItem.userId = userId;
+        cartItem.productId = productId;
+        cartItem.quantity = quantity;
+
+        return cartItem;
     }
 
     public void applyQuantity(Long value) {

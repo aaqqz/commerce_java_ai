@@ -8,19 +8,22 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 @Table(name = "favorite")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FavoriteEntity extends BaseEntity {
     private Long userId;
     private Long productId;
     private LocalDateTime favoritedAt;
 
-    public FavoriteEntity(Long userId, Long productId, LocalDateTime favoritedAt) {
-        this.userId = userId;
-        this.productId = productId;
-        this.favoritedAt = favoritedAt;
+    public static FavoriteEntity create(Long userId, Long productId, LocalDateTime favoritedAt) {
+        FavoriteEntity favorite = new FavoriteEntity();
+        favorite.userId = userId;
+        favorite.productId = productId;
+        favorite.favoritedAt = favoritedAt;
+
+        return favorite;
     }
 
     public void favorite() {

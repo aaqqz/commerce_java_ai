@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 @Table(name = "cancel")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CancelEntity extends BaseEntity {
     private Long userId;
@@ -26,7 +26,7 @@ public class CancelEntity extends BaseEntity {
     private String externalCancelKey;
     private LocalDateTime canceledAt;
 
-    public CancelEntity(
+    public static CancelEntity create(
             Long userId,
             Long orderId,
             Long paymentId,
@@ -39,16 +39,19 @@ public class CancelEntity extends BaseEntity {
             String externalCancelKey,
             LocalDateTime canceledAt
     ) {
-        this.userId = userId;
-        this.orderId = orderId;
-        this.paymentId = paymentId;
-        this.originAmount = originAmount;
-        this.ownedCouponId = ownedCouponId;
-        this.couponDiscount = couponDiscount;
-        this.usedPoint = usedPoint;
-        this.paidAmount = paidAmount;
-        this.canceledAmount = canceledAmount;
-        this.externalCancelKey = externalCancelKey;
-        this.canceledAt = canceledAt;
+        CancelEntity cancel = new CancelEntity();
+        cancel.userId = userId;
+        cancel.orderId = orderId;
+        cancel.paymentId = paymentId;
+        cancel.originAmount = originAmount;
+        cancel.ownedCouponId = ownedCouponId;
+        cancel.couponDiscount = couponDiscount;
+        cancel.usedPoint = usedPoint;
+        cancel.paidAmount = paidAmount;
+        cancel.canceledAmount = canceledAmount;
+        cancel.externalCancelKey = externalCancelKey;
+        cancel.canceledAt = canceledAt;
+
+        return cancel;
     }
 }

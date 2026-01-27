@@ -58,7 +58,7 @@ public class OrderService {
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        OrderEntity order = new OrderEntity(
+        OrderEntity order = OrderEntity.create(
                 user.getId(),
                 orderKeyGenerator.generate(),
                 orderName,

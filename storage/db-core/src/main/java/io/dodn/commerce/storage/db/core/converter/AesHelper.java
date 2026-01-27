@@ -1,5 +1,7 @@
 package io.dodn.commerce.storage.db.core.converter;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -9,17 +11,14 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+@Slf4j
 @Component
+@RequiredArgsConstructor
 class AesHelper {
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
     private final SecurityProperty property;
-
-    public AesHelper(SecurityProperty property) {
-        this.property = property;
-    }
 
     public String encrypt(String target) {
         try {
