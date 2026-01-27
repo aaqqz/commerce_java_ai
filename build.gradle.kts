@@ -1,12 +1,13 @@
-import org.gradle.api.plugins.JavaPluginExtension
-
+// root build.gradle.kts (루트 빌드 설정 및 플러그인 선언)
 plugins {
+    java
     id("org.springframework.boot") apply false
     id("io.spring.dependency-management")
 }
 
 java.sourceCompatibility = JavaVersion.valueOf("VERSION_${property("javaVersion")}")
 
+// allproject settings (모든 프로젝트(루트 + 서브프로젝트)에 적용되는 설정)
 allprojects {
     group = "${property("projectGroup")}"
     version = "${property("applicationVersion")}"
@@ -16,6 +17,7 @@ allprojects {
     }
 }
 
+// subproject settings (모든 서브프로젝트(하위 모듈)에만 적용되는 설정)
 subprojects {
     apply(plugin = "java")
     apply(plugin = "org.springframework.boot")
@@ -28,8 +30,14 @@ subprojects {
     }
 
     dependencies {
-        testImplementation("org.springframework.boot:spring-boot-starter-test")
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+        testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+        compileOnly("org.projectlombok:lombok")
+        annotationProcessor("org.projectlombok:lombok")
+        testCompileOnly("org.projectlombok:lombok")
+        testAnnotationProcessor("org.projectlombok:lombok")
     }
 
     tasks.getByName("bootJar") {
@@ -50,7 +58,7 @@ subprojects {
 
     tasks.named<Test>("test") {
         useJUnitPlatform {
-            excludeTags("develop")
+            excludeTags("develop") // 기본 test 실행 시 develop 태그가 붙은 테스트는 제외(개발용 테스트를 기본 실행에서 제외)
         }
     }
 

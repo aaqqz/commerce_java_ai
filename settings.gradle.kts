@@ -1,5 +1,6 @@
 rootProject.name = "dev-practice-commerce"
 
+// add sub-module
 include(
     "core:core-enum",
     "core:core-api",
