@@ -2,47 +2,55 @@ package io.dodn.commerce.core.domain;
 
 import io.dodn.commerce.core.support.error.CoreException;
 import io.dodn.commerce.core.support.error.ErrorType;
-import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Getter
-public class PaymentDiscount {
-    private final List<OwnedCoupon> ownedCoupons;
-    private final PointBalance pointBalance;
-    private final Long useOwnedCouponId;
-    private final BigDecimal usePointAmount;
-    private final BigDecimal couponDiscount;
-    private final BigDecimal usePoint;
+public record PaymentDiscount(
+        List<OwnedCoupon> ownedCoupons,
+        PointBalance pointBalance,
+        Long useOwnedCouponId,
+        BigDecimal usePointAmount,
+        BigDecimal couponDiscount,
+        BigDecimal usePoint
+) {
+    public PaymentDiscount(
+            List<OwnedCoupon> ownedCoupons,
+            PointBalance pointBalance,
+            Long useOwnedCouponId,
+            BigDecimal usePointAmount
+    ) {
+        this(
+                ownedCoupons,
+                pointBalance,
+                useOwnedCouponId,
+                usePointAmount,
+                calculateCouponDiscount(ownedCoupons, useOwnedCouponId),
+                calculateUsePoint(pointBalance, usePointAmount)
+        );
+    }
 
-    public PaymentDiscount(List<OwnedCoupon> ownedCoupons, PointBalance pointBalance,
-                          Long useOwnedCouponId, BigDecimal usePointAmount) {
-        this.ownedCoupons = ownedCoupons;
-        this.pointBalance = pointBalance;
-        this.useOwnedCouponId = useOwnedCouponId;
-        this.usePointAmount = usePointAmount;
-
-        // 쿠폰 할인 계산
-        if (useOwnedCouponId > 0) {
-            OwnedCoupon ownedCoupon = ownedCoupons.stream()
-                    .filter(c -> c.getId().equals(useOwnedCouponId))
-                    .findFirst()
-                    .orElseThrow(() -> new CoreException(ErrorType.OWNED_COUPON_INVALID));
-            this.couponDiscount = ownedCoupon.getCoupon().getDiscount();
-        } else {
-            this.couponDiscount = BigDecimal.ZERO;
+    private static BigDecimal calculateCouponDiscount(List<OwnedCoupon> ownedCoupons, Long useOwnedCouponId) {
+        if (useOwnedCouponId <= 0) {
+            return BigDecimal.ZERO;
         }
 
-        // 포인트 사용액 계산
-        if (usePointAmount.compareTo(BigDecimal.ZERO) > 0) {
-            if (usePointAmount.compareTo(pointBalance.getBalance()) > 0) {
-                throw new CoreException(ErrorType.POINT_EXCEEDS_BALANCE);
-            }
-            this.usePoint = usePointAmount;
-        } else {
-            this.usePoint = BigDecimal.ZERO;
+        OwnedCoupon ownedCoupon = ownedCoupons.stream()
+                .filter(c -> c.id().equals(useOwnedCouponId))
+                .findFirst()
+                .orElseThrow(() -> new CoreException(ErrorType.OWNED_COUPON_INVALID));
+        return ownedCoupon.coupon().discount();
+    }
+
+    private static BigDecimal calculateUsePoint(PointBalance pointBalance, BigDecimal usePointAmount) {
+        if (usePointAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
         }
+
+        if (usePointAmount.compareTo(pointBalance.balance()) > 0) {
+            throw new CoreException(ErrorType.POINT_EXCEEDS_BALANCE);
+        }
+        return usePointAmount;
     }
 
     public BigDecimal paidAmount(BigDecimal orderPrice) {

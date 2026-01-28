@@ -23,7 +23,7 @@ public class FavoriteService {
     public Page<Favorite> findFavorites(User user, OffsetLimit offsetLimit) {
         LocalDateTime cutoff = LocalDateTime.now().minusDays(30);
         Slice<FavoriteEntity> result = favoriteRepository.findByUserIdAndStatusAndUpdatedAtAfter(
-                user.getId(),
+                user.id(),
                 EntityStatus.ACTIVE,
                 cutoff,
                 offsetLimit.toPageable()
@@ -43,10 +43,10 @@ public class FavoriteService {
 
     @Transactional
     public Long addFavorite(User user, Long productId) {
-        FavoriteEntity existing = favoriteRepository.findByUserIdAndProductId(user.getId(), productId);
+        FavoriteEntity existing = favoriteRepository.findByUserIdAndProductId(user.id(), productId);
         if (existing == null) {
             FavoriteEntity saved = favoriteRepository.save(FavoriteEntity.create(
-                    user.getId(),
+                    user.id(),
                     productId,
                     LocalDateTime.now()
             ));
@@ -59,7 +59,7 @@ public class FavoriteService {
 
     @Transactional
     public Long removeFavorite(User user, Long productId) {
-        FavoriteEntity existing = favoriteRepository.findByUserIdAndProductId(user.getId(), productId);
+        FavoriteEntity existing = favoriteRepository.findByUserIdAndProductId(user.id(), productId);
         if (existing == null) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);
         }
