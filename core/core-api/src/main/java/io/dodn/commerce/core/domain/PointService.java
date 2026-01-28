@@ -18,10 +18,9 @@ public class PointService {
     private final PointHistoryRepository pointHistoryRepository;
 
     public PointBalance balance(User user) {
-        PointBalanceEntity found = pointBalanceRepository.findByUserId(user.getId());
-        if (found == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+        PointBalanceEntity found = pointBalanceRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));;
+
         return new PointBalance(found.getUserId(), found.getBalance());
     }
 

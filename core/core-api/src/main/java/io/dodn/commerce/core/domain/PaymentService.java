@@ -34,12 +34,13 @@ public class PaymentService {
 
     @Transactional
     public Long createPayment(Order order, PaymentDiscount paymentDiscount) {
-        PaymentEntity existingPayment = paymentRepository.findByOrderId(order.getId());
-        if (existingPayment != null && existingPayment.getState() == PaymentState.SUCCESS) {
+        PaymentEntity existingPayment = paymentRepository.findByOrderId(order.getId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+        if (existingPayment.getState() == PaymentState.SUCCESS) {
             throw new CoreException(ErrorType.ORDER_ALREADY_PAID);
         }
 
-        PaymentEntity payment = new PaymentEntity(
+        PaymentEntity payment = PaymentEntity.create(
                 order.getUserId(),
                 order.getId(),
                 order.getTotalPrice(),
@@ -54,15 +55,12 @@ public class PaymentService {
 
     @Transactional
     public Long success(String orderKey, String externalPaymentKey, BigDecimal amount) {
-        OrderEntity order = orderRepository.findByOrderKeyAndStateAndStatus(orderKey, OrderState.CREATED, EntityStatus.ACTIVE);
-        if (order == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+        OrderEntity order = orderRepository.findByOrderKeyAndStateAndStatus(orderKey, OrderState.CREATED, EntityStatus.ACTIVE)
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
-        PaymentEntity payment = paymentRepository.findByOrderId(order.getId());
-        if (payment == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+        PaymentEntity payment = paymentRepository.findByOrderId(order.getId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
         if (!payment.getUserId().equals(order.getUserId())) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);
         }
@@ -95,7 +93,7 @@ public class PaymentService {
         pointHandler.deduct(new User(payment.getUserId()), PointType.PAYMENT, payment.getId(), payment.getUsedPoint());
         pointHandler.earn(new User(payment.getUserId()), PointType.PAYMENT, payment.getId(), PointAmount.PAYMENT);
 
-        transactionHistoryRepository.save(new TransactionHistoryEntity(
+        transactionHistoryRepository.save(TransactionHistoryEntity.create(
                 TransactionType.PAYMENT,
                 order.getUserId(),
                 order.getId(),
@@ -109,16 +107,13 @@ public class PaymentService {
     }
 
     public void fail(String orderKey, String code, String message) {
-        OrderEntity order = orderRepository.findByOrderKeyAndStateAndStatus(orderKey, OrderState.CREATED, EntityStatus.ACTIVE);
-        if (order == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
-        PaymentEntity payment = paymentRepository.findByOrderId(order.getId());
-        if (payment == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+        OrderEntity order = orderRepository.findByOrderKeyAndStateAndStatus(orderKey, OrderState.CREATED, EntityStatus.ACTIVE)
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
-        transactionHistoryRepository.save(new TransactionHistoryEntity(
+        PaymentEntity payment = paymentRepository.findByOrderId(order.getId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
+        transactionHistoryRepository.save(TransactionHistoryEntity.create(
                 TransactionType.PAYMENT_FAIL,
                 order.getUserId(),
                 order.getId(),

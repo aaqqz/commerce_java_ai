@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 @Table(
         name = "payment",
@@ -21,7 +22,6 @@ import java.time.LocalDateTime;
                 @Index(name = "udx_order_id", columnList = "orderId", unique = true)
         }
 )
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PaymentEntity extends BaseEntity {
     private Long userId;
@@ -43,7 +43,7 @@ public class PaymentEntity extends BaseEntity {
     private String approveCode;
     private LocalDateTime paidAt;
 
-    public PaymentEntity(
+    public static PaymentEntity create(
             Long userId,
             Long orderId,
             BigDecimal originAmount,
@@ -51,24 +51,24 @@ public class PaymentEntity extends BaseEntity {
             BigDecimal couponDiscount,
             BigDecimal usedPoint,
             BigDecimal paidAmount,
-            PaymentState state,
-            String externalPaymentKey,
-            PaymentMethod method,
-            String approveCode,
-            LocalDateTime paidAt
+            PaymentState state
     ) {
-        this.userId = userId;
-        this.orderId = orderId;
-        this.originAmount = originAmount;
-        this.ownedCouponId = ownedCouponId;
-        this.couponDiscount = couponDiscount;
-        this.usedPoint = usedPoint;
-        this.paidAmount = paidAmount;
-        this.state = state;
-        this.externalPaymentKey = externalPaymentKey;
-        this.method = method;
-        this.approveCode = approveCode;
-        this.paidAt = paidAt;
+        PaymentEntity payment = new PaymentEntity();
+        payment.userId = userId;
+        payment.orderId = orderId;
+        payment.originAmount = originAmount;
+        payment.ownedCouponId = ownedCouponId;
+        payment.couponDiscount = couponDiscount;
+        payment.usedPoint = usedPoint;
+        payment.paidAmount = paidAmount;
+        payment.state = state;
+
+        payment.externalPaymentKey = null;
+        payment.method = null;
+        payment.approveCode = null;
+        payment.paidAt = null;
+
+        return payment;
     }
 
     public void success(String externalPaymentKey, PaymentMethod method, String approveCode) {

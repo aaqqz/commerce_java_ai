@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+@Getter
 @Entity
 @Table(
         name = "review",
@@ -20,7 +21,6 @@ import java.math.BigDecimal;
                 @Index(name = "udx_user_review", columnList = "userId, reviewKey", unique = true)
         }
 )
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewEntity extends BaseEntity {
     private Long userId;
@@ -35,7 +35,7 @@ public class ReviewEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    public ReviewEntity(
+    public static ReviewEntity create(
             Long userId,
             String reviewKey,
             ReviewTargetType targetType,
@@ -43,12 +43,15 @@ public class ReviewEntity extends BaseEntity {
             BigDecimal rate,
             String content
     ) {
-        this.userId = userId;
-        this.reviewKey = reviewKey;
-        this.targetType = targetType;
-        this.targetId = targetId;
-        this.rate = rate;
-        this.content = content;
+        ReviewEntity review = new ReviewEntity();
+        review.userId = userId;
+        review.reviewKey = reviewKey;
+        review.targetType = targetType;
+        review.targetId = targetId;
+        review.rate = rate;
+        review.content = content;
+
+        return review;
     }
 
     public void updateContent(BigDecimal rate, String content) {

@@ -56,29 +56,26 @@ public class CartService {
 
     @Transactional
     public Long addCartItem(User user, AddCartItem item) {
-        CartItemEntity existing = cartItemRepository.findByUserIdAndProductId(user.getId(), item.getProductId());
-        if (existing != null) {
-            if (existing.isDeleted()) {
-                existing.active();
-            }
-            existing.applyQuantity(item.getQuantity());
-            return existing.getId();
-        } else {
-            return cartItemRepository.save(CartItemEntity.create(
-                    user.getId(),
-                    item.getProductId(),
-                    item.getQuantity()
-            )).getId();
-        }
+        CartItemEntity found = cartItemRepository.findByUserIdAndProductId(user.getId(), item.getProductId())
+                .map(existing -> {
+                    if (existing.isDeleted()) existing.active();
+
+                    existing.applyQuantity(item.getQuantity());
+                    return existing;
+                })
+                .orElseGet(() -> {
+                    CartItemEntity created = CartItemEntity.create(user.getId(), item.getProductId(), item.getQuantity());
+                    return cartItemRepository.save(created);
+                });
+        return found.getId();
     }
 
     @Transactional
     public Long modifyCartItem(User user, ModifyCartItem item) {
         CartItemEntity found = cartItemRepository.findByUserIdAndIdAndStatus(
-                user.getId(), item.getCartItemId(), EntityStatus.ACTIVE);
-        if (found == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+                user.getId(), item.getCartItemId(), EntityStatus.ACTIVE
+        ).orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
         found.applyQuantity(item.getQuantity());
         return found.getId();
     }
@@ -86,10 +83,9 @@ public class CartService {
     @Transactional
     public void deleteCartItem(User user, Long cartItemId) {
         CartItemEntity entity = cartItemRepository.findByUserIdAndIdAndStatus(
-                user.getId(), cartItemId, EntityStatus.ACTIVE);
-        if (entity == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+                user.getId(), cartItemId, EntityStatus.ACTIVE
+        ).orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
         entity.delete();
     }
 }

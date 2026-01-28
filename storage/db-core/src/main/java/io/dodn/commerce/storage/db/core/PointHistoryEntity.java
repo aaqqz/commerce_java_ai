@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+@Getter
 @Entity
 @Table(name = "point_history")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PointHistoryEntity extends BaseEntity {
     private Long userId;
@@ -20,17 +20,20 @@ public class PointHistoryEntity extends BaseEntity {
     private BigDecimal amount;
     private BigDecimal balanceAfter;
 
-    public PointHistoryEntity(
+    public static PointHistoryEntity create(
             Long userId,
             PointType type,
             Long referenceId,
             BigDecimal amount,
             BigDecimal balanceAfter
     ) {
-        this.userId = userId;
-        this.type = type;
-        this.referenceId = referenceId;
-        this.amount = amount;
-        this.balanceAfter = balanceAfter;
+        PointHistoryEntity history = new PointHistoryEntity();
+        history.userId = userId;
+        history.type = type;
+        history.referenceId = referenceId;
+        history.amount = amount;
+        history.balanceAfter = balanceAfter;
+
+        return history;
     }
 }

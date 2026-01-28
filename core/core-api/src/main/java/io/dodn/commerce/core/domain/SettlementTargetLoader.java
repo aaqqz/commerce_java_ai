@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +30,14 @@ public class SettlementTargetLoader {
 
         Map<Long, MerchantProductMappingEntity> merchantMappingMap =
                 merchantProductMappingRepository.findByProductIdIn(
-                                orderItems.stream().map(OrderItemEntity::getProductId).collect(Collectors.toSet())
+                                orderItems.stream()
+                                        .map(OrderItemEntity::getProductId)
+                                        .collect(Collectors.toSet())
                         ).stream()
-                        .collect(Collectors.toMap(MerchantProductMappingEntity::getProductId, m -> m));
+                        .collect(Collectors.toMap(
+                                MerchantProductMappingEntity::getProductId,
+                                m -> m)
+                        );
 
         List<SettlementTargetEntity> targets = orderItems.stream()
                 .map(item -> {
@@ -44,19 +50,24 @@ public class SettlementTargetLoader {
                         throw new IllegalStateException("주문 " + item.getOrderId() + " 의 거래 ID 매핑이 존재하지 않음");
                     }
 
-                    return new SettlementTargetEntity(
-                            settleDate,
+                    // targetAmount
+                    BigDecimal targetAmount = switch (transactionType) {
+                        case PAYMENT -> item.getTotalPrice();
+                        case CANCEL -> item.getTotalPrice().negate();
+                        default -> throw new UnsupportedOperationException();
+                    };
+
+                    return SettlementTargetEntity.create(
                             mapping.getMerchantId(),
+                            settleDate,
+                            targetAmount,
                             transactionType,
                             transactionId,
                             item.getOrderId(),
                             item.getProductId(),
                             item.getQuantity(),
                             item.getUnitPrice(),
-                            item.getTotalPrice(),
-                            transactionType == TransactionType.PAYMENT
-                                    ? item.getTotalPrice()
-                                    : item.getTotalPrice().negate()
+                            item.getTotalPrice()
                     );
                 })
                 .collect(Collectors.toList());

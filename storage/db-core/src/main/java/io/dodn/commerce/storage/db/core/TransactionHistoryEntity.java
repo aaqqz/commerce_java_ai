@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 @Table(name = "transaction_history")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TransactionHistoryEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
@@ -28,7 +28,7 @@ public class TransactionHistoryEntity extends BaseEntity {
     private String message;
     private LocalDateTime occurredAt;
 
-    public TransactionHistoryEntity(
+    public static TransactionHistoryEntity create(
             TransactionType type,
             Long userId,
             Long orderId,
@@ -38,13 +38,16 @@ public class TransactionHistoryEntity extends BaseEntity {
             String message,
             LocalDateTime occurredAt
     ) {
-        this.type = type;
-        this.userId = userId;
-        this.orderId = orderId;
-        this.paymentId = paymentId;
-        this.externalPaymentKey = externalPaymentKey;
-        this.amount = amount;
-        this.message = message;
-        this.occurredAt = occurredAt;
+        TransactionHistoryEntity history = new TransactionHistoryEntity();
+        history.type = type;
+        history.userId = userId;
+        history.orderId = orderId;
+        history.paymentId = paymentId;
+        history.externalPaymentKey = externalPaymentKey;
+        history.amount = amount;
+        history.message = message;
+        history.occurredAt = occurredAt;
+
+        return history;
     }
 }

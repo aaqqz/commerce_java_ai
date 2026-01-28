@@ -9,21 +9,24 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+@Getter
 @Entity
 @Table(name = "point_balance")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PointBalanceEntity extends BaseEntity {
     private Long userId;
     private BigDecimal balance;
 
     @Version
-    private Long version = 0L;
+    private Long version;
 
-    public PointBalanceEntity(Long userId, BigDecimal balance) {
-        this.userId = userId;
-        this.balance = balance;
-        this.version = 0L;
+    public static PointBalanceEntity create(Long userId, BigDecimal balance) {
+        PointBalanceEntity pointBalance = new PointBalanceEntity();
+        pointBalance.userId = userId;
+        pointBalance.balance = balance;
+        pointBalance.version = 0L;
+
+        return pointBalance;
     }
 
     public void apply(BigDecimal amount) {

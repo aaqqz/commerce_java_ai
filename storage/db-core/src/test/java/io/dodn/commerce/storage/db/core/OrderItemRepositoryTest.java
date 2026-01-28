@@ -41,13 +41,13 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
                 )
         );
         OrderItemEntity includedItem = orderItemRepository.save(
-                new OrderItemEntity(
+                OrderItemEntity.create(
                         includedOrder.getId(),
                         productId,
                         "Prod",
                         "http://example.com/thumb.jpg",
                         "desc",
-                        1,
+                        1L,
                         new BigDecimal(1000),
                         new BigDecimal(1000)
                 )
@@ -64,13 +64,13 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
                 )
         );
         orderItemRepository.save(
-                new OrderItemEntity(
+                OrderItemEntity.create(
                         otherUserOrder.getId(),
                         productId,
                         "Prod",
                         "http://example.com/thumb.jpg",
                         "desc",
-                        1,
+                        1L,
                         new BigDecimal(1000),
                         new BigDecimal(1000)
                 )
@@ -87,13 +87,13 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
                 )
         );
         orderItemRepository.save(
-                new OrderItemEntity(
+                OrderItemEntity.create(
                         createdOrder.getId(),
                         productId,
                         "Prod",
                         "http://example.com/thumb.jpg",
                         "desc",
-                        1,
+                        1L,
                         new BigDecimal(1000),
                         new BigDecimal(1000)
                 )
@@ -112,13 +112,13 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
         deletedOrder.delete();
         orderRepository.save(deletedOrder);
         orderItemRepository.save(
-                new OrderItemEntity(
+                OrderItemEntity.create(
                         deletedOrder.getId(),
                         productId,
                         "Prod",
                         "http://example.com/thumb.jpg",
                         "desc",
-                        1,
+                        1L,
                         new BigDecimal(1000),
                         new BigDecimal(1000)
                 )
@@ -135,13 +135,13 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
                 )
         );
         OrderItemEntity deletedItem = orderItemRepository.save(
-                new OrderItemEntity(
+                OrderItemEntity.create(
                         orderForDeletedItem.getId(),
                         productId,
                         "Prod",
                         "http://example.com/thumb.jpg",
                         "desc",
-                        1,
+                        1L,
                         new BigDecimal(1000),
                         new BigDecimal(1000)
                 )
@@ -160,13 +160,13 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
                 )
         );
         orderItemRepository.save(
-                new OrderItemEntity(
+                OrderItemEntity.create(
                         orderOtherProduct.getId(),
                         999L,
                         "Other Prod",
                         "http://example.com/thumb2.jpg",
                         "desc2",
-                        1,
+                        1L,
                         new BigDecimal(2000),
                         new BigDecimal(2000)
                 )

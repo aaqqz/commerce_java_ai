@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Getter
 @Entity
 @Table(
         name = "settlement",
@@ -20,7 +21,6 @@ import java.time.LocalDate;
                 @Index(name = "udx_settlement_merchant", columnList = "settlementDate, merchantId", unique = true)
         }
 )
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SettlementEntity extends BaseEntity {
     private Long merchantId;
@@ -33,7 +33,7 @@ public class SettlementEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SettlementState state;
 
-    public SettlementEntity(
+    public static SettlementEntity create(
             Long merchantId,
             LocalDate settlementDate,
             BigDecimal originalAmount,
@@ -42,13 +42,16 @@ public class SettlementEntity extends BaseEntity {
             BigDecimal settlementAmount,
             SettlementState state
     ) {
-        this.merchantId = merchantId;
-        this.settlementDate = settlementDate;
-        this.originalAmount = originalAmount;
-        this.feeAmount = feeAmount;
-        this.feeRate = feeRate;
-        this.settlementAmount = settlementAmount;
-        this.state = state;
+        SettlementEntity settlement = new SettlementEntity();
+        settlement.merchantId = merchantId;
+        settlement.settlementDate = settlementDate;
+        settlement.originalAmount = originalAmount;
+        settlement.feeAmount = feeAmount;
+        settlement.feeRate = feeRate;
+        settlement.settlementAmount = settlementAmount;
+        settlement.state = state;
+
+        return settlement;
     }
 
     public void sent() {

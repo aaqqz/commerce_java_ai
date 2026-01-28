@@ -7,9 +7,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @Table(name = "question")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QuestionEntity extends BaseEntity {
     private Long userId;
@@ -20,11 +20,14 @@ public class QuestionEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    public QuestionEntity(Long userId, Long productId, String title, String content) {
-        this.userId = userId;
-        this.productId = productId;
-        this.title = title;
-        this.content = content;
+    public static QuestionEntity create(Long userId, Long productId, String title, String content) {
+        QuestionEntity question = new QuestionEntity();
+        question.userId = userId;
+        question.productId = productId;
+        question.title = title;
+        question.content = content;
+
+        return question;
     }
 
     public void updateContent(String title, String content) {

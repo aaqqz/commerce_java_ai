@@ -2,6 +2,8 @@ package io.dodn.commerce.storage.db.core;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface PointBalanceRepository extends JpaRepository<PointBalanceEntity, Long> {
-    PointBalanceEntity findByUserId(Long userId);
+    Optional<PointBalanceEntity> findByUserId(Long userId);
 }

@@ -5,10 +5,7 @@ import io.dodn.commerce.core.support.OffsetLimit;
 import io.dodn.commerce.core.support.Page;
 import io.dodn.commerce.core.support.error.CoreException;
 import io.dodn.commerce.core.support.error.ErrorType;
-import io.dodn.commerce.storage.db.core.ProductCategoryRepository;
-import io.dodn.commerce.storage.db.core.ProductEntity;
-import io.dodn.commerce.storage.db.core.ProductRepository;
-import io.dodn.commerce.storage.db.core.ProductSectionRepository;
+import io.dodn.commerce.storage.db.core.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
@@ -24,12 +21,12 @@ public class ProductFinder {
     private final ProductSectionRepository productSectionRepository;
 
     public Page<Product> findByCategory(Long categoryId, OffsetLimit offsetLimit) {
-        Slice<io.dodn.commerce.storage.db.core.ProductCategoryEntity> categories =
+        Slice<ProductCategoryEntity> categories =
                 productCategoryRepository.findByCategoryIdAndStatus(categoryId, EntityStatus.ACTIVE, offsetLimit.toPageable());
 
         List<Product> products = productRepository.findAllById(
                         categories.getContent().stream()
-                                .map(io.dodn.commerce.storage.db.core.ProductCategoryEntity::getProductId)
+                                .map(ProductCategoryEntity::getProductId)
                                 .collect(Collectors.toList())
                 ).stream()
                 .map(it -> new Product(

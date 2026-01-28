@@ -59,7 +59,7 @@ public class QnAService {
     }
 
     public Long addQuestion(User user, Long productId, QuestionContent content) {
-        QuestionEntity saved = questionRepository.save(new QuestionEntity(
+        QuestionEntity saved = questionRepository.save(QuestionEntity.create(
                 user.getId(),
                 productId,
                 content.getTitle(),
@@ -70,8 +70,9 @@ public class QnAService {
 
     @Transactional
     public Long updateQuestion(User user, Long questionId, QuestionContent content) {
-        QuestionEntity found = questionRepository.findByIdAndUserId(questionId, user.getId());
-        if (found == null || !found.isActive()) {
+        QuestionEntity found = questionRepository.findByIdAndUserId(questionId, user.getId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+        if (!found.isActive()) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);
         }
         found.updateContent(content.getTitle(), content.getContent());
@@ -80,8 +81,9 @@ public class QnAService {
 
     @Transactional
     public Long removeQuestion(User user, Long questionId) {
-        QuestionEntity found = questionRepository.findByIdAndUserId(questionId, user.getId());
-        if (found == null || !found.isActive()) {
+        QuestionEntity found = questionRepository.findByIdAndUserId(questionId, user.getId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));;
+        if (!found.isActive()) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);
         }
         found.delete();

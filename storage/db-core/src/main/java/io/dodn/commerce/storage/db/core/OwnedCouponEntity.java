@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @Table(
         name = "owned_coupon",
@@ -18,7 +19,6 @@ import lombok.NoArgsConstructor;
                 @Index(name = "udx_owned_coupon", columnList = "userId, couponId", unique = true)
         }
 )
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OwnedCouponEntity extends BaseEntity {
     private Long userId;
@@ -28,13 +28,16 @@ public class OwnedCouponEntity extends BaseEntity {
     private OwnedCouponState state;
 
     @Version
-    private Long version = 0L;
+    private Long version;
 
-    public OwnedCouponEntity(Long userId, Long couponId, OwnedCouponState state) {
-        this.userId = userId;
-        this.couponId = couponId;
-        this.state = state;
-        this.version = 0L;
+    public static OwnedCouponEntity create(Long userId, Long couponId, OwnedCouponState state) {
+        OwnedCouponEntity ownedCoupon = new OwnedCouponEntity();
+        ownedCoupon.userId = userId;
+        ownedCoupon.couponId = couponId;
+        ownedCoupon.state = state;
+        ownedCoupon.version = 0L;
+
+        return ownedCoupon;
     }
 
     public void use() {

@@ -5,7 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface QuestionRepository extends JpaRepository<QuestionEntity, Long> {
-    QuestionEntity findByIdAndUserId(Long id, Long userId);
+    Optional<QuestionEntity> findByIdAndUserId(Long id, Long userId);
     Slice<QuestionEntity> findByProductIdAndStatus(Long productId, EntityStatus status, Pageable slice);
 }

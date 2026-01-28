@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Getter
 @Entity
 @Table(name = "settlement_target")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SettlementTargetEntity extends BaseEntity {
     private Long merchantId;
@@ -31,7 +31,7 @@ public class SettlementTargetEntity extends BaseEntity {
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
 
-    public SettlementTargetEntity(
+    public static SettlementTargetEntity create(
             Long merchantId,
             LocalDate settlementDate,
             BigDecimal targetAmount,
@@ -43,15 +43,18 @@ public class SettlementTargetEntity extends BaseEntity {
             BigDecimal unitPrice,
             BigDecimal totalPrice
     ) {
-        this.merchantId = merchantId;
-        this.settlementDate = settlementDate;
-        this.targetAmount = targetAmount;
-        this.transactionType = transactionType;
-        this.transactionId = transactionId;
-        this.orderId = orderId;
-        this.productId = productId;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.totalPrice = totalPrice;
+        SettlementTargetEntity target = new SettlementTargetEntity();
+        target.merchantId = merchantId;
+        target.settlementDate = settlementDate;
+        target.targetAmount = targetAmount;
+        target.transactionType = transactionType;
+        target.transactionId = transactionId;
+        target.orderId = orderId;
+        target.productId = productId;
+        target.quantity = quantity;
+        target.unitPrice = unitPrice;
+        target.totalPrice = totalPrice;
+
+        return target;
     }
 }

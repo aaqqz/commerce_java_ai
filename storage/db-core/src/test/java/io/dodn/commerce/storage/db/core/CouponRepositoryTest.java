@@ -68,7 +68,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
                 )
         );
         productCategoryRepository.save(
-                new ProductCategoryEntity(
+                ProductCategoryEntity.create(
                         11L,
                         100L
                 )
@@ -117,7 +117,7 @@ public class CouponRepositoryTest extends CoreDbContextTest {
                 )
         );
         productCategoryRepository.save(
-                new ProductCategoryEntity(
+                ProductCategoryEntity.create(
                         12L,
                         200L
                 )

@@ -7,18 +7,21 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @Table(name = "product_section")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductSectionEntity extends BaseEntity {
     private Long productId;
     private ProductSectionType type;
     private String content;
 
-    public ProductSectionEntity(Long productId, ProductSectionType type, String content) {
-        this.productId = productId;
-        this.type = type;
-        this.content = content;
+    public static ProductSectionEntity create(Long productId, ProductSectionType type, String content) {
+        ProductSectionEntity section = new ProductSectionEntity();
+        section.productId = productId;
+        section.type = type;
+        section.content = content;
+
+        return section;
     }
 }

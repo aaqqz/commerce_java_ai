@@ -22,7 +22,7 @@ public class OrderItemEntity extends BaseEntity {
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
 
-    public OrderItemEntity(
+    public static OrderItemEntity create(
             Long orderId,
             Long productId,
             String productName,
@@ -32,13 +32,16 @@ public class OrderItemEntity extends BaseEntity {
             BigDecimal unitPrice,
             BigDecimal totalPrice
     ) {
-        this.orderId = orderId;
-        this.productId = productId;
-        this.productName = productName;
-        this.thumbnailUrl = thumbnailUrl;
-        this.shortDescription = shortDescription;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.totalPrice = totalPrice;
+        OrderItemEntity orderItem = new OrderItemEntity();
+        orderItem.orderId = orderId;
+        orderItem.productId = productId;
+        orderItem.productName = productName;
+        orderItem.thumbnailUrl = thumbnailUrl;
+        orderItem.shortDescription = shortDescription;
+        orderItem.quantity = quantity;
+        orderItem.unitPrice = unitPrice;
+        orderItem.totalPrice = totalPrice;
+
+        return orderItem;
     }
 }

@@ -4,6 +4,8 @@ import io.dodn.commerce.ContextTest;
 import io.dodn.commerce.core.enums.OrderState;
 import io.dodn.commerce.core.enums.PaymentState;
 import io.dodn.commerce.core.enums.PointType;
+import io.dodn.commerce.core.support.error.CoreException;
+import io.dodn.commerce.core.support.error.ErrorType;
 import io.dodn.commerce.storage.db.core.OrderEntity;
 import io.dodn.commerce.storage.db.core.OrderRepository;
 import io.dodn.commerce.storage.db.core.PaymentEntity;
@@ -60,7 +62,7 @@ public class PaymentServiceTest extends ContextTest {
         String orderKey = "ORDER-KEY-123";
 
         // user point balance
-        pointBalanceRepository.save(new PointBalanceEntity(userId, initialPoint));
+        pointBalanceRepository.save(PointBalanceEntity.create(userId, initialPoint));
 
         // order in CREATED
         OrderEntity order = orderRepository.save(
@@ -75,7 +77,7 @@ public class PaymentServiceTest extends ContextTest {
 
         // payment READY
         PaymentEntity payment = paymentRepository.save(
-                new PaymentEntity(
+                PaymentEntity.create(
                         userId,
                         order.getId(),
                         orderPrice,
@@ -83,11 +85,7 @@ public class PaymentServiceTest extends ContextTest {
                         couponDiscount,
                         usePoint,
                         paidAmount,
-                        PaymentState.READY,
-                        null,
-                        null,
-                        null,
-                        null
+                        PaymentState.READY
                 )
         );
 
@@ -105,7 +103,7 @@ public class PaymentServiceTest extends ContextTest {
         assertThat(updatedOrder.getState()).isEqualTo(OrderState.PAID);
 
         // point balance: initial - usePoint + earn(PAYMENT)
-        PointBalanceEntity balance = pointBalanceRepository.findByUserId(userId);
+        PointBalanceEntity balance = pointBalanceRepository.findByUserId(userId).get();
         BigDecimal expectedBalance = initialPoint.subtract(usePoint).add(PointAmount.PAYMENT);
         assertThat(balance.getBalance()).isEqualByComparingTo(expectedBalance);
 

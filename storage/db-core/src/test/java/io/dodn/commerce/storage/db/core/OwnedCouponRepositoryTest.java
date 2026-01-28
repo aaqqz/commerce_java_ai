@@ -34,7 +34,7 @@ public class OwnedCouponRepositoryTest extends CoreDbContextTest {
 
         // 활성 + 미만료 쿠폰 2개 생성
         CouponEntity activeValid1 = couponRepository.save(
-                new CouponEntity(
+                CouponEntity.create(
                         "ACTIVE_VALID_1",
                         CouponType.FIXED_AMOUNT,
                         BigDecimal.TEN,
@@ -42,7 +42,7 @@ public class OwnedCouponRepositoryTest extends CoreDbContextTest {
                 )
         );
         CouponEntity activeValid2 = couponRepository.save(
-                new CouponEntity(
+                CouponEntity.create(
                         "ACTIVE_VALID_2",
                         CouponType.FIXED_AMOUNT,
                         BigDecimal.ONE,
@@ -52,7 +52,7 @@ public class OwnedCouponRepositoryTest extends CoreDbContextTest {
 
         // 비활성 쿠폰, 만료된 쿠폰 생성
         CouponEntity inactiveCoupon = couponRepository.save(
-                new CouponEntity(
+                CouponEntity.create(
                         "INACTIVE_COUPON",
                         CouponType.FIXED_AMOUNT,
                         BigDecimal.ONE,
@@ -63,7 +63,7 @@ public class OwnedCouponRepositoryTest extends CoreDbContextTest {
         couponRepository.save(inactiveCoupon);
 
         CouponEntity expiredCoupon = couponRepository.save(
-                new CouponEntity(
+                CouponEntity.create(
                         "EXPIRED_COUPON",
                         CouponType.FIXED_AMOUNT,
                         BigDecimal.ONE,
@@ -73,35 +73,35 @@ public class OwnedCouponRepositoryTest extends CoreDbContextTest {
 
         // 다운로드 상태 소유 쿠폰 2개, 사용 상태 소유 쿠폰 1개, 다른 유저의 소유 쿠폰 1개 생성
         OwnedCouponEntity ownedCoupon1 = ownedCouponRepository.save(
-                new OwnedCouponEntity(
+                OwnedCouponEntity.create(
                         userId,
                         activeValid1.getId(),
                         OwnedCouponState.DOWNLOADED
                 )
         );
         OwnedCouponEntity ownedCoupon2 = ownedCouponRepository.save(
-                new OwnedCouponEntity(
+                OwnedCouponEntity.create(
                         userId,
                         activeValid2.getId(),
                         OwnedCouponState.DOWNLOADED
                 )
         );
         ownedCouponRepository.save(
-                new OwnedCouponEntity(
+                OwnedCouponEntity.create(
                         userId,
                         inactiveCoupon.getId(),
                         OwnedCouponState.USED
                 )
         );
         ownedCouponRepository.save(
-                new OwnedCouponEntity(
+                OwnedCouponEntity.create(
                         userId,
                         expiredCoupon.getId(),
                         OwnedCouponState.DOWNLOADED
                 )
         );
         ownedCouponRepository.save(
-                new OwnedCouponEntity(
+                OwnedCouponEntity.create(
                         200L,
                         activeValid1.getId(),
                         OwnedCouponState.DOWNLOADED

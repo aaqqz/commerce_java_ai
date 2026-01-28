@@ -35,19 +35,16 @@ public class CancelService {
 
     @Transactional
     public Long cancel(User user, CancelAction action) {
-        OrderEntity order = orderRepository.findByOrderKeyAndStateAndStatus(
-                action.getOrderKey(), OrderState.PAID, EntityStatus.ACTIVE);
-        if (order == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+        OrderEntity order = orderRepository.findByOrderKeyAndStateAndStatus(action.getOrderKey(), OrderState.PAID, EntityStatus.ACTIVE)
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
         if (!order.getUserId().equals(user.getId())) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);
         }
 
-        PaymentEntity payment = paymentRepository.findByOrderId(order.getId());
-        if (payment == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+        PaymentEntity payment = paymentRepository.findByOrderId(order.getId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
         if (payment.getState() != PaymentState.SUCCESS) {
             throw new CoreException(ErrorType.PAYMENT_INVALID_STATE);
         }
@@ -82,7 +79,7 @@ public class CancelService {
                 LocalDateTime.now()
         ));
 
-        transactionHistoryRepository.save(new TransactionHistoryEntity(
+        transactionHistoryRepository.save(TransactionHistoryEntity.create(
                 TransactionType.CANCEL,
                 payment.getUserId(),
                 payment.getOrderId(),

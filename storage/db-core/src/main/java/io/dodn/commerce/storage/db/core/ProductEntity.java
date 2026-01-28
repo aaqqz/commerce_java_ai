@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+@Getter
 @Entity
 @Table(name = "product")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductEntity extends BaseEntity {
     private String name;
@@ -21,7 +21,7 @@ public class ProductEntity extends BaseEntity {
     private BigDecimal salesPrice;
     private BigDecimal discountedPrice;
 
-    public ProductEntity(
+    public static ProductEntity create(
             String name,
             String thumbnailUrl,
             String description,
@@ -30,12 +30,15 @@ public class ProductEntity extends BaseEntity {
             BigDecimal salesPrice,
             BigDecimal discountedPrice
     ) {
-        this.name = name;
-        this.thumbnailUrl = thumbnailUrl;
-        this.description = description;
-        this.shortDescription = shortDescription;
-        this.costPrice = costPrice;
-        this.salesPrice = salesPrice;
-        this.discountedPrice = discountedPrice;
+        ProductEntity product = new ProductEntity();
+        product.name = name;
+        product.thumbnailUrl = thumbnailUrl;
+        product.description = description;
+        product.shortDescription = shortDescription;
+        product.costPrice = costPrice;
+        product.salesPrice = salesPrice;
+        product.discountedPrice = discountedPrice;
+
+        return product;
     }
 }

@@ -14,7 +14,7 @@ public class ReviewManager {
     private final ReviewRepository reviewRepository;
 
     public Long add(ReviewKey reviewKey, ReviewTarget target, ReviewContent content) {
-        ReviewEntity saved = reviewRepository.save(new ReviewEntity(
+        ReviewEntity saved = reviewRepository.save(ReviewEntity.create(
                 reviewKey.getUser().getId(),
                 reviewKey.getKey(),
                 target.getType(),
@@ -27,20 +27,18 @@ public class ReviewManager {
 
     @Transactional
     public Long update(User user, Long reviewId, ReviewContent content) {
-        ReviewEntity found = reviewRepository.findByIdAndUserId(reviewId, user.getId());
-        if (found == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+        ReviewEntity found = reviewRepository.findByIdAndUserId(reviewId, user.getId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
         found.updateContent(content.getRate(), content.getContent());
         return found.getId();
     }
 
     @Transactional
     public Long delete(User user, Long reviewId) {
-        ReviewEntity found = reviewRepository.findByIdAndUserId(reviewId, user.getId());
-        if (found == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+        ReviewEntity found = reviewRepository.findByIdAndUserId(reviewId, user.getId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
         found.delete();
         return found.getId();
     }

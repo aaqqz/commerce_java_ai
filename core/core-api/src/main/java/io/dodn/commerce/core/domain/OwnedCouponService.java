@@ -57,17 +57,13 @@ public class OwnedCouponService {
     }
 
     public void download(User user, Long couponId) {
-        CouponEntity coupon = couponRepository.findByIdAndStatusAndExpiredAtAfter(
-                couponId, EntityStatus.ACTIVE, LocalDateTime.now());
-        if (coupon == null) {
-            throw new CoreException(ErrorType.COUPON_NOT_FOUND_OR_EXPIRED);
-        }
+        CouponEntity coupon = couponRepository.findByIdAndStatusAndExpiredAtAfter(couponId, EntityStatus.ACTIVE, LocalDateTime.now())
+                .orElseThrow(() -> new CoreException(ErrorType.COUPON_NOT_FOUND_OR_EXPIRED));
 
-        OwnedCouponEntity existing = ownedCouponRepository.findByUserIdAndCouponId(user.getId(), couponId);
-        if (existing != null) {
-            throw new CoreException(ErrorType.COUPON_ALREADY_DOWNLOADED);
-        }
-        ownedCouponRepository.save(new OwnedCouponEntity(
+        ownedCouponRepository.findByUserIdAndCouponId(user.getId(), couponId)
+                .orElseThrow(() -> new CoreException(ErrorType.COUPON_ALREADY_DOWNLOADED));
+
+        ownedCouponRepository.save(OwnedCouponEntity.create(
                 user.getId(),
                 coupon.getId(),
                 OwnedCouponState.DOWNLOADED

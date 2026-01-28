@@ -27,7 +27,7 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
 
         // 가맹점 1: 2개의 행, 주문 ID 중복으로 DISTINCT 주문 수 집계 검증
         settlementTargetRepository.save(
-                new SettlementTargetEntity(
+                SettlementTargetEntity.create(
                         1L,
                         date,
                         new BigDecimal(1000),
@@ -35,13 +35,13 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
                         10L,
                         100L,
                         1000L,
-                        1,
+                        1L,
                         new BigDecimal(1000),
                         new BigDecimal(1000)
                 )
         );
         settlementTargetRepository.save(
-                new SettlementTargetEntity(
+                SettlementTargetEntity.create(
                         1L,
                         date,
                         new BigDecimal(2000),
@@ -49,7 +49,7 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
                         11L,
                         100L, // 동일 주문 ID로 COUNT(DISTINCT orderId) 검증
                         1001L,
-                        2,
+                        2L,
                         new BigDecimal(1000),
                         new BigDecimal(2000)
                 )
@@ -57,7 +57,7 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
 
         // 가맹점 2: 동일 정산일에 1개의 행
         settlementTargetRepository.save(
-                new SettlementTargetEntity(
+                SettlementTargetEntity.create(
                         2L,
                         date,
                         new BigDecimal(3000),
@@ -65,7 +65,7 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
                         12L,
                         200L,
                         2000L,
-                        3,
+                        3L,
                         new BigDecimal(1000),
                         new BigDecimal(3000)
                 )
@@ -73,7 +73,7 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
 
         // 다른 정산일 데이터는 제외되어야 함
         settlementTargetRepository.save(
-                new SettlementTargetEntity(
+                SettlementTargetEntity.create(
                         1L,
                         date.minusDays(1),
                         new BigDecimal(9999),
@@ -81,29 +81,29 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
                         13L,
                         300L,
                         3000L,
-                        9,
+                        9L,
                         new BigDecimal(1111),
                         new BigDecimal(9999)
                 )
         );
 
         // when (실행)
-        List<SettlementSummary> summaries = settlementTargetRepository.findSummary(date);
+        List<SettlementTargetSummary> summaries = settlementTargetRepository.findSummary(date);
 
         // then (검증)
         // 두 개의 요약 레코드를 기대 (가맹점 1, 2)
         assertThat(summaries).hasSize(2);
 
-        Map<Long, SettlementSummary> byMerchant = summaries.stream()
-                .collect(Collectors.toMap(SettlementSummary::getMerchantId, s -> s));
+        Map<Long, SettlementTargetSummary> byMerchant = summaries.stream()
+                .collect(Collectors.toMap(SettlementTargetSummary::getMerchantId, s -> s));
 
-        SettlementSummary m1 = byMerchant.get(1L);
+        SettlementTargetSummary m1 = byMerchant.get(1L);
         assertThat(m1.getSettlementDate()).isEqualTo(date);
         assertThat(m1.getTargetAmount()).isEqualByComparingTo(new BigDecimal(3000)); // 1000 + 2000 합계
         assertThat(m1.getTargetCount()).isEqualTo(2); // 두 개 행
         assertThat(m1.getOrderCount()).isEqualTo(1); // 주문 ID 100 하나만 DISTINCT
 
-        SettlementSummary m2 = byMerchant.get(2L);
+        SettlementTargetSummary m2 = byMerchant.get(2L);
         assertThat(m2.getSettlementDate()).isEqualTo(date);
         assertThat(m2.getTargetAmount()).isEqualByComparingTo(new BigDecimal(3000));
         assertThat(m2.getTargetCount()).isEqualTo(1);
@@ -117,7 +117,7 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
 
         // 가맹점 1: 결제 2건 + 취소 1건(음수)
         settlementTargetRepository.save(
-                new SettlementTargetEntity(
+                SettlementTargetEntity.create(
                         1L,
                         date,
                         new BigDecimal(1500),
@@ -125,13 +125,13 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
                         101L,
                         1000L,
                         9000L,
-                        1,
+                        1L,
                         new BigDecimal(1500),
                         new BigDecimal(1500)
                 )
         );
         settlementTargetRepository.save(
-                new SettlementTargetEntity(
+                SettlementTargetEntity.create(
                         1L,
                         date,
                         new BigDecimal(500),
@@ -139,13 +139,13 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
                         102L,
                         1001L,
                         9001L,
-                        1,
+                        1L,
                         new BigDecimal(500),
                         new BigDecimal(500)
                 )
         );
         settlementTargetRepository.save(
-                new SettlementTargetEntity(
+                SettlementTargetEntity.create(
                         1L,
                         date,
                         new BigDecimal(-500),
@@ -153,7 +153,7 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
                         103L,
                         1001L, // 동일 주문에 대한 취소
                         9001L,
-                        1,
+                        1L,
                         new BigDecimal(500),
                         new BigDecimal(500)
                 )
@@ -161,7 +161,7 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
 
         // 가맹점 2: 결제 1건, 취소 1건(음수) -> 순합 0, 주문 2개(DISTINCT)
         settlementTargetRepository.save(
-                new SettlementTargetEntity(
+                SettlementTargetEntity.create(
                         2L,
                         date,
                         new BigDecimal(700),
@@ -169,13 +169,13 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
                         201L,
                         2000L,
                         8000L,
-                        1,
+                        1L,
                         new BigDecimal(700),
                         new BigDecimal(700)
                 )
         );
         settlementTargetRepository.save(
-                new SettlementTargetEntity(
+                SettlementTargetEntity.create(
                         2L,
                         date,
                         new BigDecimal(-700),
@@ -183,26 +183,26 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
                         202L,
                         2001L,
                         8001L,
-                        1,
+                        1L,
                         new BigDecimal(700),
                         new BigDecimal(700)
                 )
         );
 
         // when
-        List<SettlementSummary> summaries = settlementTargetRepository.findSummary(date);
+        List<SettlementTargetSummary> summaries = settlementTargetRepository.findSummary(date);
 
         // then
         assertThat(summaries).hasSize(2);
-        Map<Long, SettlementSummary> byMerchant = summaries.stream()
-                .collect(Collectors.toMap(SettlementSummary::getMerchantId, s -> s));
+        Map<Long, SettlementTargetSummary> byMerchant = summaries.stream()
+                .collect(Collectors.toMap(SettlementTargetSummary::getMerchantId, s -> s));
 
-        SettlementSummary m1 = byMerchant.get(1L);
+        SettlementTargetSummary m1 = byMerchant.get(1L);
         assertThat(m1.getTargetAmount()).isEqualByComparingTo(new BigDecimal(1500)); // 1500 + 500 - 500
         assertThat(m1.getTargetCount()).isEqualTo(3); // 결제 2 + 취소 1
         assertThat(m1.getOrderCount()).isEqualTo(2); // 1000, 1001
 
-        SettlementSummary m2 = byMerchant.get(2L);
+        SettlementTargetSummary m2 = byMerchant.get(2L);
         assertThat(m2.getTargetAmount()).isEqualByComparingTo(new BigDecimal(0)); // 700 - 700
         assertThat(m2.getTargetCount()).isEqualTo(2);
         assertThat(m2.getOrderCount()).isEqualTo(2); // 2000, 2001

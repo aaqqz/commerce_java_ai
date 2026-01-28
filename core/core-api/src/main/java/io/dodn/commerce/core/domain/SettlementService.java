@@ -77,7 +77,7 @@ public class SettlementService {
         List<SettlementEntity> settlements = summary.stream()
                 .map(it -> {
                     SettlementAmount amount = SettlementCalculator.calculate(it.getTargetAmount());
-                    return new SettlementEntity(
+                    return SettlementEntity.create(
                             it.getMerchantId(),
                             it.getSettlementDate(),
                             amount.getOriginalAmount(),
@@ -96,7 +96,7 @@ public class SettlementService {
     public int transfer() {
         Map<Long, List<SettlementEntity>> settlements = settlementRepository.findByState(SettlementState.READY)
                 .stream()
-                .collect(Collectors.groupBy(SettlementEntity::getMerchantId));
+                .collect(Collectors.groupingBy(SettlementEntity::getMerchantId));
 
         for (Map.Entry<Long, List<SettlementEntity>> settlement : settlements.entrySet()) {
             try {

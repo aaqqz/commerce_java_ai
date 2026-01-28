@@ -50,10 +50,9 @@ public class ReviewPolicyValidator {
     }
 
     public void validateUpdate(User user, Long reviewId) {
-        ReviewEntity review = reviewRepository.findByIdAndUserId(reviewId, user.getId());
-        if (review == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+        ReviewEntity review = reviewRepository.findByIdAndUserId(reviewId, user.getId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
         if (review.getCreatedAt().plusDays(7).isBefore(LocalDateTime.now())) {
             throw new CoreException(ErrorType.REVIEW_UPDATE_EXPIRED);
         }

@@ -70,7 +70,7 @@ public class OrderService {
         List<OrderItemEntity> orderItems = newOrder.getItems().stream()
                 .map(item -> {
                     ProductEntity product = productMap.get(item.getProductId());
-                    return new OrderItemEntity(
+                    return OrderItemEntity.create(
                             savedOrder.getId(),
                             product.getId(),
                             product.getName(),
@@ -110,10 +110,9 @@ public class OrderService {
 
     @Transactional
     public Order getOrder(User user, String orderKey, OrderState state) {
-        OrderEntity order = orderRepository.findByOrderKeyAndStateAndStatus(orderKey, state, EntityStatus.ACTIVE);
-        if (order == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+        OrderEntity order = orderRepository.findByOrderKeyAndStateAndStatus(orderKey, state, EntityStatus.ACTIVE)
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
         if (!order.getUserId().equals(user.getId())) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);
         }
