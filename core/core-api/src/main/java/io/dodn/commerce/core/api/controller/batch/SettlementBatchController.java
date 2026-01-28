@@ -22,11 +22,13 @@ public class SettlementBatchController {
     @PostMapping("/internal-batch/load-targets")
     public ApiResponse<Object> loadTargets(@RequestParam(required = false) LocalDate targetDate) {
         LocalDate settleDate = targetDate != null ? targetDate : LocalDate.now();
+
         settlementService.loadTargets(
                 settleDate,
                 settleDate.minusDays(1).atStartOfDay(),
                 settleDate.atStartOfDay().minusNanos(1)
         );
+
         return ApiResponse.success();
     }
 
@@ -37,7 +39,9 @@ public class SettlementBatchController {
     @PostMapping("/internal-batch/calculate")
     public ApiResponse<Object> calculate(@RequestParam(required = false) LocalDate targetDate) {
         LocalDate settleDate = targetDate != null ? targetDate : LocalDate.now();
+
         settlementService.calculate(settleDate);
+
         return ApiResponse.success();
     }
 
@@ -48,6 +52,7 @@ public class SettlementBatchController {
     @PostMapping("/internal-batch/transfer")
     public ApiResponse<Object> transfer() {
         settlementService.transfer();
+
         return ApiResponse.success();
     }
 }

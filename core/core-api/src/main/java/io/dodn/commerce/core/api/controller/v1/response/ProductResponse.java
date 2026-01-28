@@ -1,24 +1,20 @@
 package io.dodn.commerce.core.api.controller.v1.response;
 
 import io.dodn.commerce.core.domain.Product;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
-@AllArgsConstructor
-public class ProductResponse {
-    private final String name;
-    private final String thumbnailUrl;
-    private final String description;
-    private final String shortDescription;
-    private final BigDecimal costPrice;
-    private final BigDecimal salesPrice;
-    private final BigDecimal discountedPrice;
-
+public record ProductResponse(
+        String name,
+        String thumbnailUrl,
+        String description,
+        String shortDescription,
+        BigDecimal costPrice,
+        BigDecimal salesPrice,
+        BigDecimal discountedPrice
+) {
     public static List<ProductResponse> of(List<Product> products) {
         return products.stream()
                 .map(it -> new ProductResponse(

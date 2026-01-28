@@ -35,10 +35,10 @@ public class CancelService {
 
     @Transactional
     public Long cancel(User user, CancelAction action) {
-        OrderEntity order = orderRepository.findByOrderKeyAndStateAndStatus(action.getOrderKey(), OrderState.PAID, EntityStatus.ACTIVE)
+        OrderEntity order = orderRepository.findByOrderKeyAndStateAndStatus(action.orderKey(), OrderState.PAID, EntityStatus.ACTIVE)
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
-        if (!order.getUserId().equals(user.getId())) {
+        if (!order.getUserId().equals(user.id())) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);
         }
 
@@ -56,10 +56,8 @@ public class CancelService {
         order.canceled();
 
         if (payment.hasAppliedCoupon()) {
-            OwnedCouponEntity ownedCoupon = ownedCouponRepository.findById(payment.getOwnedCouponId()).orElse(null);
-            if (ownedCoupon != null) {
-                ownedCoupon.revert();
-            }
+            ownedCouponRepository.findById(payment.getOwnedCouponId())
+                    .ifPresent(OwnedCouponEntity::revert);
         }
 
         pointHandler.earn(new User(payment.getUserId()), PointType.PAYMENT, payment.getId(), payment.getUsedPoint());

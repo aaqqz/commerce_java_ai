@@ -1,10 +1,7 @@
 package io.dodn.commerce.core.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public record User(
+        Long id
+) {
 
-@Getter
-@AllArgsConstructor
-public class User {
-    private final Long id;
 }
