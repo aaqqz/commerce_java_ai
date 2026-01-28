@@ -31,9 +31,11 @@ public class ProductController {
     public ApiResponse<PageResponse<ProductResponse>> findProducts(
             @RequestParam Long categoryId,
             @RequestParam Integer offset,
-            @RequestParam Integer limit) {
-        var result = productService.findProducts(categoryId, new OffsetLimit(offset, limit));
-        return ApiResponse.success(new PageResponse<>(ProductResponse.of(result.content()), result.hasNext()));
+            @RequestParam Integer limit
+    ) {
+        var result = productService.findProducts(categoryId, OffsetLimit.of(offset, limit));
+
+        return ApiResponse.success(PageResponse.of(ProductResponse.of(result.content()), result.hasNext()));
     }
 
     @GetMapping("/v1/products/{productId}")
@@ -43,6 +45,7 @@ public class ProductController {
         var rateSummary = reviewService.findRateSummary(new ReviewTarget(ReviewTargetType.PRODUCT, productId));
         // NOTE: 별도 API 가 나을까?
         var coupons = couponService.getCouponsForProducts(List.of(productId));
+
         return ApiResponse.success(ProductDetailResponse.of(product, sections, rateSummary, coupons));
     }
 }

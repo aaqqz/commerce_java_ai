@@ -21,13 +21,13 @@ public class ProductFinder {
     private final ProductSectionRepository productSectionRepository;
 
     public Page<Product> findByCategory(Long categoryId, OffsetLimit offsetLimit) {
-        Slice<ProductCategoryEntity> categories =
+        Slice<ProductCategoryEntity> productCategories =
                 productCategoryRepository.findByCategoryIdAndStatus(categoryId, EntityStatus.ACTIVE, offsetLimit.toPageable());
 
         List<Product> products = productRepository.findAllById(
-                        categories.getContent().stream()
+                        productCategories.getContent().stream()
                                 .map(ProductCategoryEntity::getProductId)
-                                .collect(Collectors.toList())
+                                .toList()
                 ).stream()
                 .map(it -> new Product(
                         it.getId(),
@@ -41,9 +41,9 @@ public class ProductFinder {
                                 it.getDiscountedPrice()
                         )
                 ))
-                .collect(Collectors.toList());
+                .toList();
 
-        return new Page<>(products, categories.hasNext());
+        return new Page<>(products, productCategories.hasNext());
     }
 
     public Product find(Long productId) {
@@ -67,8 +67,8 @@ public class ProductFinder {
 
     public List<ProductSection> findSections(Long productId) {
         return productSectionRepository.findByProductId(productId).stream()
-                .filter(io.dodn.commerce.storage.db.core.ProductSectionEntity::isActive)
+                .filter(ProductSectionEntity::isActive)
                 .map(it -> new ProductSection(it.getType(), it.getContent()))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

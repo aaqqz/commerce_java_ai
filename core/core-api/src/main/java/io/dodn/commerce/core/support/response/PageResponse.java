@@ -7,4 +7,7 @@ public record PageResponse<T>(
         Boolean hasNext
 ) {
 
+    public static <T> PageResponse<T> of(List<T> content, Boolean hasNext) {
+        return new PageResponse<>(content, hasNext);
+    }
 }

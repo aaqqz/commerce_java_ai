@@ -10,6 +10,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,10 +40,9 @@ public class ReviewFinder {
     }
 
     public RateSummary findRateSummary(ReviewTarget target) {
-        List<ReviewEntity> founds = reviewRepository.findByTargetTypeAndTargetId(target.type(), target.id())
-                .stream()
+        List<ReviewEntity> founds = reviewRepository.findByTargetTypeAndTargetId(target.type(), target.id()).stream()
                 .filter(ReviewEntity::isActive)
-                .collect(Collectors.toList());
+                .toList();
 
         if (founds.isEmpty()) {
             return RateSummary.EMPTY;
@@ -50,7 +50,8 @@ public class ReviewFinder {
             BigDecimal sum = founds.stream()
                     .map(ReviewEntity::getRate)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-            BigDecimal average = sum.divide(BigDecimal.valueOf(founds.size()), 2, java.math.RoundingMode.HALF_UP);
+            BigDecimal average = sum.divide(BigDecimal.valueOf(founds.size()), 2, RoundingMode.HALF_UP);
+
             return new RateSummary(average, (long) founds.size());
         }
     }

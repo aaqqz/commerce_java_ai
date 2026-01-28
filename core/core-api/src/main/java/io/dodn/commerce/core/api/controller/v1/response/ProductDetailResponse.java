@@ -40,10 +40,10 @@ public record ProductDetailResponse(
                 rateSummary.count(),
                 sections.stream()
                         .map(it -> new ProductSectionResponse(it.type(), it.content()))
-                        .collect(Collectors.toList()),
+                        .toList(),
                 coupons.stream()
                         .map(CouponResponse::of)
-                        .collect(Collectors.toList())
+                        .toList()
         );
     }
 }

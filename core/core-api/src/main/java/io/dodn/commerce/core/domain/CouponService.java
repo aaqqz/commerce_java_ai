@@ -2,10 +2,7 @@ package io.dodn.commerce.core.domain;
 
 import io.dodn.commerce.core.enums.CouponTargetType;
 import io.dodn.commerce.core.enums.EntityStatus;
-import io.dodn.commerce.storage.db.core.CouponRepository;
-import io.dodn.commerce.storage.db.core.CouponTargetEntity;
-import io.dodn.commerce.storage.db.core.CouponTargetRepository;
-import io.dodn.commerce.storage.db.core.ProductCategoryRepository;
+import io.dodn.commerce.storage.db.core.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,24 +20,30 @@ public class CouponService {
     private final ProductCategoryRepository productCategoryRepository;
 
     public List<Coupon> getCouponsForProducts(Collection<Long> productIds) {
+        // PRODUCT 대상 쿠폰 조회
         List<CouponTargetEntity> productTargets = couponTargetRepository.findByTargetTypeAndTargetIdInAndStatus(
                 CouponTargetType.PRODUCT,
                 productIds,
                 EntityStatus.ACTIVE
         );
+
+        // PRODUCT_CATEGORY 대상 쿠폰 조회
+        List<Long> productCategoryIds = productCategoryRepository.findByProductIdInAndStatus(productIds, EntityStatus.ACTIVE).stream()
+                .map(ProductCategoryEntity::getCategoryId)
+                .toList();
+
         List<CouponTargetEntity> categoryTargets = couponTargetRepository.findByTargetTypeAndTargetIdInAndStatus(
                 CouponTargetType.PRODUCT_CATEGORY,
-                productCategoryRepository.findByProductIdInAndStatus(productIds, EntityStatus.ACTIVE)
-                        .stream()
-                        .map(io.dodn.commerce.storage.db.core.ProductCategoryEntity::getCategoryId)
-                        .collect(Collectors.toList()),
+                productCategoryIds,
                 EntityStatus.ACTIVE
         );
 
+        // 두 리스트 합치고 couponId만 추출
         Set<Long> couponIds = Stream.concat(productTargets.stream(), categoryTargets.stream())
                 .map(CouponTargetEntity::getCouponId)
                 .collect(Collectors.toSet());
 
+        // 최종 Coupon 조회 및 매핑
         return couponRepository.findByIdInAndStatus(couponIds, EntityStatus.ACTIVE).stream()
                 .map(it -> new Coupon(
                         it.getId(),
@@ -49,6 +52,6 @@ public class CouponService {
                         it.getDiscount(),
                         it.getExpiredAt()
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 }
