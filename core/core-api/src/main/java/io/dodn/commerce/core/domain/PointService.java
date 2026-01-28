@@ -18,14 +18,14 @@ public class PointService {
     private final PointHistoryRepository pointHistoryRepository;
 
     public PointBalance balance(User user) {
-        PointBalanceEntity found = pointBalanceRepository.findByUserId(user.getId())
+        PointBalanceEntity found = pointBalanceRepository.findByUserId(user.id())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));;
 
         return new PointBalance(found.getUserId(), found.getBalance());
     }
 
     public List<PointHistory> histories(User user) {
-        return pointHistoryRepository.findByUserId(user.getId()).stream()
+        return pointHistoryRepository.findByUserId(user.id()).stream()
                 .map(it -> new PointHistory(
                         it.getId(),
                         it.getUserId(),

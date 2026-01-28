@@ -30,11 +30,11 @@ public class PaymentController {
     public ApiResponse<CreatePaymentResponse> create(
             User user,
             @RequestBody CreatePaymentRequest request) {
-        var order = orderService.getOrder(user, request.getOrderKey(), OrderState.CREATED);
+        var order = orderService.getOrder(user, request.orderKey(), OrderState.CREATED);
         var ownedCoupons = ownedCouponService.getOwnedCouponsForCheckout(
                 user,
-                order.getItems().stream()
-                        .map(io.dodn.commerce.core.domain.OrderItem::getProductId)
+                order.items().stream()
+                        .map(io.dodn.commerce.core.domain.OrderItem::productId)
                         .collect(Collectors.toList())
         );
         var pointBalance = pointService.balance(user);

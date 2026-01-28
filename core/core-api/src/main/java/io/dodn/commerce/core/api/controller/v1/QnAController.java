@@ -22,14 +22,14 @@ public class QnAController {
             @RequestParam Integer offset,
             @RequestParam Integer limit) {
         var page = qnaService.findQnA(productId, new OffsetLimit(offset, limit));
-        return ApiResponse.success(new PageResponse<>(QnAResponse.of(page.getContent()), page.isHasNext()));
+        return ApiResponse.success(new PageResponse<>(QnAResponse.of(page.content()), page.hasNext()));
     }
 
     @PostMapping("/v1/questions")
     public ApiResponse<Object> createQuestion(
             User user,
             @RequestBody AddQuestionRequest request) {
-        qnaService.addQuestion(user, request.getProductId(), request.toContent());
+        qnaService.addQuestion(user, request.productId(), request.toContent());
         return ApiResponse.success();
     }
 

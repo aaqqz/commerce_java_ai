@@ -30,8 +30,8 @@ public class OrderService {
 
     @Transactional
     public String create(User user, NewOrder newOrder) {
-        Set<Long> orderProductIds = newOrder.getItems().stream()
-                .map(NewOrderItem::getProductId)
+        Set<Long> orderProductIds = newOrder.items().stream()
+                .map(NewOrderItem::productId)
                 .collect(Collectors.toSet());
 
         Map<Long, ProductEntity> productMap = productRepository
@@ -46,20 +46,20 @@ public class OrderService {
             throw new CoreException(ErrorType.PRODUCT_MISMATCH_IN_ORDER);
         }
 
-        NewOrderItem firstItem = newOrder.getItems().get(0);
-        ProductEntity firstProduct = productMap.get(firstItem.getProductId());
+        NewOrderItem firstItem = newOrder.items().get(0);
+        ProductEntity firstProduct = productMap.get(firstItem.productId());
         String orderName = firstProduct.getName() +
-                (newOrder.getItems().size() > 1 ? " 외 " + (newOrder.getItems().size() - 1) + "개" : "");
+                (newOrder.items().size() > 1 ? " 외 " + (newOrder.items().size() - 1) + "개" : "");
 
-        BigDecimal totalPrice = newOrder.getItems().stream()
+        BigDecimal totalPrice = newOrder.items().stream()
                 .map(item -> {
-                    ProductEntity product = productMap.get(item.getProductId());
-                    return product.getDiscountedPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+                    ProductEntity product = productMap.get(item.productId());
+                    return product.getDiscountedPrice().multiply(BigDecimal.valueOf(item.quantity()));
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         OrderEntity order = OrderEntity.create(
-                user.getId(),
+                user.id(),
                 orderKeyGenerator.generate(),
                 orderName,
                 totalPrice,
@@ -67,18 +67,18 @@ public class OrderService {
         );
         OrderEntity savedOrder = orderRepository.save(order);
 
-        List<OrderItemEntity> orderItems = newOrder.getItems().stream()
+        List<OrderItemEntity> orderItems = newOrder.items().stream()
                 .map(item -> {
-                    ProductEntity product = productMap.get(item.getProductId());
+                    ProductEntity product = productMap.get(item.productId());
                     return OrderItemEntity.create(
                             savedOrder.getId(),
                             product.getId(),
                             product.getName(),
                             product.getThumbnailUrl(),
                             product.getShortDescription(),
-                            item.getQuantity(),
+                            item.quantity(),
                             product.getDiscountedPrice(),
-                            product.getDiscountedPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
+                            product.getDiscountedPrice().multiply(BigDecimal.valueOf(item.quantity()))
                     );
                 })
                 .collect(Collectors.toList());
@@ -91,7 +91,7 @@ public class OrderService {
     @Transactional
     public List<OrderSummary> getOrders(User user) {
         List<OrderEntity> orders = orderRepository.findByUserIdAndStateAndStatusOrderByIdDesc(
-                user.getId(), OrderState.PAID, EntityStatus.ACTIVE);
+                user.id(), OrderState.PAID, EntityStatus.ACTIVE);
         if (orders.isEmpty()) {
             return List.of();
         }
@@ -101,7 +101,7 @@ public class OrderService {
                         it.getId(),
                         it.getOrderKey(),
                         it.getName(),
-                        user.getId(),
+                        user.id(),
                         it.getTotalPrice(),
                         it.getState()
                 ))
@@ -113,7 +113,7 @@ public class OrderService {
         OrderEntity order = orderRepository.findByOrderKeyAndStateAndStatus(orderKey, state, EntityStatus.ACTIVE)
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
-        if (!order.getUserId().equals(user.getId())) {
+        if (!order.getUserId().equals(user.id())) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);
         }
 
@@ -126,7 +126,7 @@ public class OrderService {
                 order.getId(),
                 order.getOrderKey(),
                 order.getName(),
-                user.getId(),
+                user.id(),
                 order.getTotalPrice(),
                 order.getState(),
                 items.stream()

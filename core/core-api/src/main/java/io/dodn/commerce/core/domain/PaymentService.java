@@ -34,20 +34,20 @@ public class PaymentService {
 
     @Transactional
     public Long createPayment(Order order, PaymentDiscount paymentDiscount) {
-        PaymentEntity existingPayment = paymentRepository.findByOrderId(order.getId())
+        PaymentEntity existingPayment = paymentRepository.findByOrderId(order.id())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
         if (existingPayment.getState() == PaymentState.SUCCESS) {
             throw new CoreException(ErrorType.ORDER_ALREADY_PAID);
         }
 
         PaymentEntity payment = PaymentEntity.create(
-                order.getUserId(),
-                order.getId(),
-                order.getTotalPrice(),
-                paymentDiscount.getUseOwnedCouponId(),
-                paymentDiscount.getCouponDiscount(),
-                paymentDiscount.getUsePoint(),
-                paymentDiscount.paidAmount(order.getTotalPrice()),
+                order.userId(),
+                order.id(),
+                order.totalPrice(),
+                paymentDiscount.useOwnedCouponId(),
+                paymentDiscount.couponDiscount(),
+                paymentDiscount.usePoint(),
+                paymentDiscount.paidAmount(order.totalPrice()),
                 PaymentState.READY
         );
         return paymentRepository.save(payment).getId();

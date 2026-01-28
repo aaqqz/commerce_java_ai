@@ -60,28 +60,28 @@ public class QnAService {
 
     public Long addQuestion(User user, Long productId, QuestionContent content) {
         QuestionEntity saved = questionRepository.save(QuestionEntity.create(
-                user.getId(),
+                user.id(),
                 productId,
-                content.getTitle(),
-                content.getContent()
+                content.title(),
+                content.content()
         ));
         return saved.getId();
     }
 
     @Transactional
     public Long updateQuestion(User user, Long questionId, QuestionContent content) {
-        QuestionEntity found = questionRepository.findByIdAndUserId(questionId, user.getId())
+        QuestionEntity found = questionRepository.findByIdAndUserId(questionId, user.id())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
         if (!found.isActive()) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);
         }
-        found.updateContent(content.getTitle(), content.getContent());
+        found.updateContent(content.title(), content.content());
         return found.getId();
     }
 
     @Transactional
     public Long removeQuestion(User user, Long questionId) {
-        QuestionEntity found = questionRepository.findByIdAndUserId(questionId, user.getId())
+        QuestionEntity found = questionRepository.findByIdAndUserId(questionId, user.id())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));;
         if (!found.isActive()) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);

@@ -23,10 +23,10 @@ public class ReviewPolicyValidator {
     private final ReviewRepository reviewRepository;
 
     public ReviewKey validateNew(User user, ReviewTarget target) {
-        if (target.getType() == ReviewTargetType.PRODUCT) {
+        if (target.type() == ReviewTargetType.PRODUCT) {
             List<String> reviewKeys = orderItemRepository.findRecentOrderItemsForProduct(
-                            user.getId(),
-                            target.getId(),
+                            user.id(),
+                            target.id(),
                             OrderState.PAID,
                             LocalDateTime.now().minusDays(14),
                             EntityStatus.ACTIVE
@@ -34,7 +34,7 @@ public class ReviewPolicyValidator {
                     .map(it -> "ORDER_ITEM_" + it.getId())
                     .collect(Collectors.toList());
 
-            Set<String> existReviewKeys = reviewRepository.findByUserIdAndReviewKeyIn(user.getId(), reviewKeys)
+            Set<String> existReviewKeys = reviewRepository.findByUserIdAndReviewKeyIn(user.id(), reviewKeys)
                     .stream()
                     .map(ReviewEntity::getReviewKey)
                     .collect(Collectors.toSet());
@@ -50,7 +50,7 @@ public class ReviewPolicyValidator {
     }
 
     public void validateUpdate(User user, Long reviewId) {
-        ReviewEntity review = reviewRepository.findByIdAndUserId(reviewId, user.getId())
+        ReviewEntity review = reviewRepository.findByIdAndUserId(reviewId, user.id())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
         if (review.getCreatedAt().plusDays(7).isBefore(LocalDateTime.now())) {

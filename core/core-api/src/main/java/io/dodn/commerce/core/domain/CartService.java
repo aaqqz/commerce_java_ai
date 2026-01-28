@@ -22,13 +22,13 @@ public class CartService {
     private final ProductRepository productRepository;
 
     public Cart getCart(User user) {
-        List<CartItemEntity> items = cartItemRepository.findByUserIdAndStatus(user.getId(), EntityStatus.ACTIVE);
+        List<CartItemEntity> items = cartItemRepository.findByUserIdAndStatus(user.id(), EntityStatus.ACTIVE);
         Map<Long, ProductEntity> productMap = productRepository.findAllById(
                 items.stream().map(CartItemEntity::getProductId).collect(Collectors.toList())
         ).stream().collect(Collectors.toMap(ProductEntity::getId, p -> p));
 
         return new Cart(
-                user.getId(),
+                user.id(),
                 items.stream()
                         .filter(it -> productMap.containsKey(it.getProductId()))
                         .map(it -> {
@@ -56,15 +56,15 @@ public class CartService {
 
     @Transactional
     public Long addCartItem(User user, AddCartItem item) {
-        CartItemEntity found = cartItemRepository.findByUserIdAndProductId(user.getId(), item.getProductId())
+        CartItemEntity found = cartItemRepository.findByUserIdAndProductId(user.id(), item.productId())
                 .map(existing -> {
                     if (existing.isDeleted()) existing.active();
 
-                    existing.applyQuantity(item.getQuantity());
+                    existing.applyQuantity(item.quantity());
                     return existing;
                 })
                 .orElseGet(() -> {
-                    CartItemEntity created = CartItemEntity.create(user.getId(), item.getProductId(), item.getQuantity());
+                    CartItemEntity created = CartItemEntity.create(user.id(), item.productId(), item.quantity());
                     return cartItemRepository.save(created);
                 });
         return found.getId();
@@ -73,17 +73,17 @@ public class CartService {
     @Transactional
     public Long modifyCartItem(User user, ModifyCartItem item) {
         CartItemEntity found = cartItemRepository.findByUserIdAndIdAndStatus(
-                user.getId(), item.getCartItemId(), EntityStatus.ACTIVE
+                user.id(), item.cartItemId(), EntityStatus.ACTIVE
         ).orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
-        found.applyQuantity(item.getQuantity());
+        found.applyQuantity(item.quantity());
         return found.getId();
     }
 
     @Transactional
     public void deleteCartItem(User user, Long cartItemId) {
         CartItemEntity entity = cartItemRepository.findByUserIdAndIdAndStatus(
-                user.getId(), cartItemId, EntityStatus.ACTIVE
+                user.id(), cartItemId, EntityStatus.ACTIVE
         ).orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
         entity.delete();

@@ -25,7 +25,7 @@ public class OwnedCouponService {
     private final OwnedCouponRepository ownedCouponRepository;
 
     public List<OwnedCoupon> getOwnedCoupons(User user) {
-        List<OwnedCouponEntity> ownedCoupons = ownedCouponRepository.findByUserIdAndStatus(user.getId(), EntityStatus.ACTIVE);
+        List<OwnedCouponEntity> ownedCoupons = ownedCouponRepository.findByUserIdAndStatus(user.id(), EntityStatus.ACTIVE);
         if (ownedCoupons.isEmpty()) {
             return List.of();
         }
@@ -60,11 +60,11 @@ public class OwnedCouponService {
         CouponEntity coupon = couponRepository.findByIdAndStatusAndExpiredAtAfter(couponId, EntityStatus.ACTIVE, LocalDateTime.now())
                 .orElseThrow(() -> new CoreException(ErrorType.COUPON_NOT_FOUND_OR_EXPIRED));
 
-        ownedCouponRepository.findByUserIdAndCouponId(user.getId(), couponId)
+        ownedCouponRepository.findByUserIdAndCouponId(user.id(), couponId)
                 .orElseThrow(() -> new CoreException(ErrorType.COUPON_ALREADY_DOWNLOADED));
 
         ownedCouponRepository.save(OwnedCouponEntity.create(
-                user.getId(),
+                user.id(),
                 coupon.getId(),
                 OwnedCouponState.DOWNLOADED
         ));
@@ -84,7 +84,7 @@ public class OwnedCouponService {
         }
 
         List<OwnedCouponEntity> ownedCoupons = ownedCouponRepository.findOwnedCouponIds(
-                user.getId(), applicableCouponMap.keySet(), LocalDateTime.now());
+                user.id(), applicableCouponMap.keySet(), LocalDateTime.now());
 
         if (ownedCoupons.isEmpty()) {
             return List.of();

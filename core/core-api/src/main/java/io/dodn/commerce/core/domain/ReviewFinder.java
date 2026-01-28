@@ -20,8 +20,8 @@ public class ReviewFinder {
 
     public Page<Review> find(ReviewTarget target, OffsetLimit offsetLimit) {
         Slice<ReviewEntity> result = reviewRepository.findByTargetTypeAndTargetIdAndStatus(
-                target.getType(),
-                target.getId(),
+                target.type(),
+                target.id(),
                 EntityStatus.ACTIVE,
                 offsetLimit.toPageable()
         );
@@ -39,7 +39,7 @@ public class ReviewFinder {
     }
 
     public RateSummary findRateSummary(ReviewTarget target) {
-        List<ReviewEntity> founds = reviewRepository.findByTargetTypeAndTargetId(target.getType(), target.getId())
+        List<ReviewEntity> founds = reviewRepository.findByTargetTypeAndTargetId(target.type(), target.id())
                 .stream()
                 .filter(ReviewEntity::isActive)
                 .collect(Collectors.toList());

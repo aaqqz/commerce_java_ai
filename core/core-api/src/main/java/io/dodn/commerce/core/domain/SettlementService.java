@@ -76,14 +76,14 @@ public class SettlementService {
         List<SettlementTargetSummary> summary = settlementTargetRepository.findSummary(settleDate);
         List<SettlementEntity> settlements = summary.stream()
                 .map(it -> {
-                    SettlementAmount amount = SettlementCalculator.calculate(it.getTargetAmount());
+                    SettlementAmount amount = SettlementCalculator.calculate(it.targetAmount());
                     return SettlementEntity.create(
-                            it.getMerchantId(),
-                            it.getSettlementDate(),
-                            amount.getOriginalAmount(),
-                            amount.getFeeAmount(),
-                            amount.getFeeRate(),
-                            amount.getSettlementAmount(),
+                            it.merchantId(),
+                            it.settlementDate(),
+                            amount.originalAmount(),
+                            amount.feeAmount(),
+                            amount.feeRate(),
+                            amount.settlementAmount(),
                             SettlementState.READY
                     );
                 })

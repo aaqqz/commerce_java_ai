@@ -25,7 +25,7 @@ public class ReviewController {
             @RequestParam Integer offset,
             @RequestParam Integer limit) {
         var page = reviewService.findReviews(new ReviewTarget(targetType, targetId), new OffsetLimit(offset, limit));
-        return ApiResponse.success(new PageResponse<>(ReviewResponse.of(page.getContent()), page.isHasNext()));
+        return ApiResponse.success(new PageResponse<>(ReviewResponse.of(page.content()), page.hasNext()));
     }
 
     @PostMapping("/v1/reviews")
