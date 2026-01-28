@@ -17,12 +17,12 @@ public record OwnedCouponResponse(
 ) {
     public static OwnedCouponResponse of(OwnedCoupon ownedCoupon) {
         return new OwnedCouponResponse(
-                ownedCoupon.getId(),
-                ownedCoupon.getState(),
-                ownedCoupon.getCoupon().getName(),
-                ownedCoupon.getCoupon().getType(),
-                ownedCoupon.getCoupon().getDiscount(),
-                ownedCoupon.getCoupon().getExpiredAt()
+                ownedCoupon.id(),
+                ownedCoupon.state(),
+                ownedCoupon.coupon().name(),
+                ownedCoupon.coupon().type(),
+                ownedCoupon.coupon().discount(),
+                ownedCoupon.coupon().expiredAt()
         );
     }
 

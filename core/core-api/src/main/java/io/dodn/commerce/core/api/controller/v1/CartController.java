@@ -20,8 +20,9 @@ public class CartController {
     @GetMapping("/v1/cart")
     public ApiResponse<CartResponse> getCart(User user) {
         var cart = cartService.getCart(user);
+
         return ApiResponse.success(new CartResponse(
-                cart.getItems().stream()
+                cart.items().stream()
                         .map(CartItemResponse::of)
                         .collect(Collectors.toList())
         ));
@@ -30,6 +31,7 @@ public class CartController {
     @PostMapping("/v1/cart/items")
     public ApiResponse<Object> addCartItem(User user, @RequestBody AddCartItemRequest request) {
         cartService.addCartItem(user, request.toAddCartItem());
+
         return ApiResponse.success();
     }
 
@@ -39,6 +41,7 @@ public class CartController {
             @PathVariable Long cartItemId,
             @RequestBody ModifyCartItemRequest request) {
         cartService.modifyCartItem(user, request.toModifyCartItem(cartItemId));
+
         return ApiResponse.success();
     }
 

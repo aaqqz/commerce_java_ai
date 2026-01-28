@@ -15,10 +15,10 @@ public record OrderListResponse(
 ) {
     private static OrderListResponse of(OrderSummary order) {
         return new OrderListResponse(
-                order.getKey(),
-                order.getName(),
-                order.getTotalPrice(),
-                order.getState()
+                order.key(),
+                order.name(),
+                order.totalPrice(),
+                order.state()
         );
     }
 

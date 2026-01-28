@@ -15,11 +15,11 @@ public record CouponResponse(
 ) {
     public static CouponResponse of(Coupon coupon) {
         return new CouponResponse(
-                coupon.getId(),
-                coupon.getName(),
-                coupon.getType(),
-                coupon.getDiscount(),
-                coupon.getExpiredAt()
+                coupon.id(),
+                coupon.name(),
+                coupon.type(),
+                coupon.discount(),
+                coupon.expiredAt()
         );
     }
 

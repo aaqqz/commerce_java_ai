@@ -18,13 +18,13 @@ public record ProductResponse(
     public static List<ProductResponse> of(List<Product> products) {
         return products.stream()
                 .map(it -> new ProductResponse(
-                        it.getName(),
-                        it.getThumbnailUrl(),
-                        it.getDescription(),
-                        it.getShortDescription(),
-                        it.getPrice().getCostPrice(),
-                        it.getPrice().getSalesPrice(),
-                        it.getPrice().getDiscountedPrice()
+                        it.name(),
+                        it.thumbnailUrl(),
+                        it.description(),
+                        it.shortDescription(),
+                        it.price().costPrice(),
+                        it.price().salesPrice(),
+                        it.price().discountedPrice()
                 ))
                 .collect(Collectors.toList());
     }

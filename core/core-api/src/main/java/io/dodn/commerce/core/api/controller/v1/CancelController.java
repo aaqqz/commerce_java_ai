@@ -17,6 +17,7 @@ public class CancelController {
     @PostMapping("/v1/cancel")
     public ApiResponse<Object> cancel(User user, @RequestBody CancelRequest request) {
         cancelService.cancel(user, request.toCancelAction());
+
         return ApiResponse.success();
     }
 }

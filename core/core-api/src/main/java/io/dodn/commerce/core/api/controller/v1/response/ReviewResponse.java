@@ -16,11 +16,11 @@ public record ReviewResponse(
 ) {
     public static ReviewResponse of(Review review) {
         return new ReviewResponse(
-                review.getId(),
-                review.getTarget().type(),
-                review.getTarget().id(),
-                review.getContent().rate(),
-                review.getContent().content()
+                review.id(),
+                review.target().type(),
+                review.target().id(),
+                review.content().rate(),
+                review.content().content()
         );
     }
 

@@ -13,14 +13,14 @@ public record PointResponse(
     public static PointResponse of(PointBalance balance, List<PointHistory> histories) {
         List<PointHistoryResponse> mapped = histories.stream()
                 .map(history -> new PointHistoryResponse(
-                        history.getType(),
-                        history.getAmount(),
-                        history.getAppliedAt()
+                        history.type(),
+                        history.amount(),
+                        history.appliedAt()
                 ))
                 .toList();
         return new PointResponse(
-                balance.getUserId(),
-                balance.getBalance(),
+                balance.userId(),
+                balance.balance(),
                 mapped
         );
     }

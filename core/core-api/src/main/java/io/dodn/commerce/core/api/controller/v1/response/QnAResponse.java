@@ -12,11 +12,11 @@ public record QnAResponse(
 ) {
     public static QnAResponse of(QnA qna) {
         return new QnAResponse(
-                qna.getQuestion().getId(),
-                qna.getQuestion().getTitle(),
-                qna.getQuestion().getContent(),
-                qna.getAnswer().getId(),
-                qna.getAnswer().getContent()
+                qna.question().id(),
+                qna.question().title(),
+                qna.question().content(),
+                qna.answer().id(),
+                qna.answer().content()
         );
     }
 

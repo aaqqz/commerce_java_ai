@@ -11,9 +11,9 @@ public record FavoriteResponse(
 ) {
     public static FavoriteResponse of(Favorite favorite) {
         return new FavoriteResponse(
-                favorite.getId(),
-                favorite.getProductId(),
-                favorite.getFavoritedAt()
+                favorite.id(),
+                favorite.productId(),
+                favorite.favoritedAt()
         );
     }
 

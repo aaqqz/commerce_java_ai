@@ -29,17 +29,17 @@ public record ProductDetailResponse(
             List<Coupon> coupons
     ) {
         return new ProductDetailResponse(
-                product.getName(),
-                product.getThumbnailUrl(),
-                product.getDescription(),
-                product.getShortDescription(),
-                product.getPrice().getCostPrice(),
-                product.getPrice().getSalesPrice(),
-                product.getPrice().getDiscountedPrice(),
-                rateSummary.getRate(),
-                rateSummary.getCount(),
+                product.name(),
+                product.thumbnailUrl(),
+                product.description(),
+                product.shortDescription(),
+                product.price().costPrice(),
+                product.price().salesPrice(),
+                product.price().discountedPrice(),
+                rateSummary.rate(),
+                rateSummary.count(),
                 sections.stream()
-                        .map(it -> new ProductSectionResponse(it.getType(), it.getContent()))
+                        .map(it -> new ProductSectionResponse(it.type(), it.content()))
                         .collect(Collectors.toList()),
                 coupons.stream()
                         .map(CouponResponse::of)

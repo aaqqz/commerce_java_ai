@@ -18,18 +18,18 @@ public record OrderCheckoutResponse(
 ) {
     public static OrderCheckoutResponse of(Order order, List<OwnedCoupon> coupons, PointBalance point) {
         return new OrderCheckoutResponse(
-                order.getKey(),
-                order.getName(),
-                order.getTotalPrice(),
-                order.getItems().stream()
+                order.key(),
+                order.name(),
+                order.totalPrice(),
+                order.items().stream()
                         .map(it -> new OrderItemResponse(
-                                it.getProductId(),
-                                it.getProductName(),
-                                it.getThumbnailUrl(),
-                                it.getShortDescription(),
-                                it.getQuantity(),
-                                it.getUnitPrice(),
-                                it.getTotalPrice()
+                                it.productId(),
+                                it.productName(),
+                                it.thumbnailUrl(),
+                                it.shortDescription(),
+                                it.quantity(),
+                                it.unitPrice(),
+                                it.totalPrice()
                         ))
                         .collect(Collectors.toList()),
                 OwnedCouponResponse.of(coupons),

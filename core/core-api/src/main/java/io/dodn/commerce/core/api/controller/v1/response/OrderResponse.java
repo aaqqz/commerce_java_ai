@@ -16,19 +16,19 @@ public record OrderResponse(
 ) {
     public static OrderResponse of(Order order) {
         return new OrderResponse(
-                order.getKey(),
-                order.getName(),
-                order.getTotalPrice(),
-                order.getState(),
-                order.getItems().stream()
+                order.key(),
+                order.name(),
+                order.totalPrice(),
+                order.state(),
+                order.items().stream()
                         .map(it -> new OrderItemResponse(
-                                it.getProductId(),
-                                it.getProductName(),
-                                it.getThumbnailUrl(),
-                                it.getShortDescription(),
-                                it.getQuantity(),
-                                it.getUnitPrice(),
-                                it.getTotalPrice()
+                                it.productId(),
+                                it.productName(),
+                                it.thumbnailUrl(),
+                                it.shortDescription(),
+                                it.quantity(),
+                                it.unitPrice(),
+                                it.totalPrice()
                         ))
                         .collect(Collectors.toList())
         );

@@ -19,16 +19,16 @@ public record CartItemResponse(
 
     public static CartItemResponse of(CartItem cartItem) {
         return new CartItemResponse(
-                cartItem.getId(),
-                cartItem.getProduct().getId(),
-                cartItem.getProduct().getName(),
-                cartItem.getProduct().getThumbnailUrl(),
-                cartItem.getProduct().getDescription(),
-                cartItem.getProduct().getShortDescription(),
-                cartItem.getProduct().getPrice().getCostPrice(),
-                cartItem.getProduct().getPrice().getSalesPrice(),
-                cartItem.getProduct().getPrice().getDiscountedPrice(),
-                cartItem.getQuantity()
+                cartItem.id(),
+                cartItem.product().id(),
+                cartItem.product().name(),
+                cartItem.product().thumbnailUrl(),
+                cartItem.product().description(),
+                cartItem.product().shortDescription(),
+                cartItem.product().price().costPrice(),
+                cartItem.product().price().salesPrice(),
+                cartItem.product().price().discountedPrice(),
+                cartItem.quantity()
         );
     }
 }
