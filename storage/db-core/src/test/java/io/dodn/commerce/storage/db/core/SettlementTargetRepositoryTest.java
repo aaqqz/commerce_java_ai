@@ -95,19 +95,19 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
         assertThat(summaries).hasSize(2);
 
         Map<Long, SettlementTargetSummary> byMerchant = summaries.stream()
-                .collect(Collectors.toMap(SettlementTargetSummary::getMerchantId, s -> s));
+                .collect(Collectors.toMap(SettlementTargetSummary::merchantId, s -> s));
 
         SettlementTargetSummary m1 = byMerchant.get(1L);
-        assertThat(m1.getSettlementDate()).isEqualTo(date);
-        assertThat(m1.getTargetAmount()).isEqualByComparingTo(new BigDecimal(3000)); // 1000 + 2000 합계
-        assertThat(m1.getTargetCount()).isEqualTo(2); // 두 개 행
-        assertThat(m1.getOrderCount()).isEqualTo(1); // 주문 ID 100 하나만 DISTINCT
+        assertThat(m1.settlementDate()).isEqualTo(date);
+        assertThat(m1.targetAmount()).isEqualByComparingTo(new BigDecimal(3000)); // 1000 + 2000 합계
+        assertThat(m1.targetCount()).isEqualTo(2); // 두 개 행
+        assertThat(m1.orderCount()).isEqualTo(1); // 주문 ID 100 하나만 DISTINCT
 
         SettlementTargetSummary m2 = byMerchant.get(2L);
-        assertThat(m2.getSettlementDate()).isEqualTo(date);
-        assertThat(m2.getTargetAmount()).isEqualByComparingTo(new BigDecimal(3000));
-        assertThat(m2.getTargetCount()).isEqualTo(1);
-        assertThat(m2.getOrderCount()).isEqualTo(1);
+        assertThat(m2.settlementDate()).isEqualTo(date);
+        assertThat(m2.targetAmount()).isEqualByComparingTo(new BigDecimal(3000));
+        assertThat(m2.targetCount()).isEqualTo(1);
+        assertThat(m2.orderCount()).isEqualTo(1);
     }
 
     @Test
@@ -195,16 +195,16 @@ public class SettlementTargetRepositoryTest extends CoreDbContextTest {
         // then
         assertThat(summaries).hasSize(2);
         Map<Long, SettlementTargetSummary> byMerchant = summaries.stream()
-                .collect(Collectors.toMap(SettlementTargetSummary::getMerchantId, s -> s));
+                .collect(Collectors.toMap(SettlementTargetSummary::merchantId, s -> s));
 
         SettlementTargetSummary m1 = byMerchant.get(1L);
-        assertThat(m1.getTargetAmount()).isEqualByComparingTo(new BigDecimal(1500)); // 1500 + 500 - 500
-        assertThat(m1.getTargetCount()).isEqualTo(3); // 결제 2 + 취소 1
-        assertThat(m1.getOrderCount()).isEqualTo(2); // 1000, 1001
+        assertThat(m1.targetAmount()).isEqualByComparingTo(new BigDecimal(1500)); // 1500 + 500 - 500
+        assertThat(m1.targetCount()).isEqualTo(3); // 결제 2 + 취소 1
+        assertThat(m1.orderCount()).isEqualTo(2); // 1000, 1001
 
         SettlementTargetSummary m2 = byMerchant.get(2L);
-        assertThat(m2.getTargetAmount()).isEqualByComparingTo(new BigDecimal(0)); // 700 - 700
-        assertThat(m2.getTargetCount()).isEqualTo(2);
-        assertThat(m2.getOrderCount()).isEqualTo(2); // 2000, 2001
+        assertThat(m2.targetAmount()).isEqualByComparingTo(new BigDecimal(0)); // 700 - 700
+        assertThat(m2.targetCount()).isEqualTo(2);
+        assertThat(m2.orderCount()).isEqualTo(2); // 2000, 2001
     }
 }
