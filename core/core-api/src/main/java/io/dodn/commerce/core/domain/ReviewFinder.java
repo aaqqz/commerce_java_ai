@@ -26,6 +26,7 @@ public class ReviewFinder {
                 EntityStatus.ACTIVE,
                 offsetLimit.toPageable()
         );
+
         return new Page<>(
                 result.getContent().stream()
                         .map(it -> new Review(
@@ -34,7 +35,7 @@ public class ReviewFinder {
                                 new ReviewTarget(it.getTargetType(), it.getTargetId()),
                                 new ReviewContent(it.getRate(), it.getContent())
                         ))
-                        .collect(Collectors.toList()),
+                        .toList(),
                 result.hasNext()
         );
     }

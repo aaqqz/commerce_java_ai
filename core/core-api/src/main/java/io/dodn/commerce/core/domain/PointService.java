@@ -6,12 +6,11 @@ import io.dodn.commerce.storage.db.core.PointBalanceEntity;
 import io.dodn.commerce.storage.db.core.PointBalanceRepository;
 import io.dodn.commerce.storage.db.core.PointHistoryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class PointService {
     private final PointBalanceRepository pointBalanceRepository;
@@ -19,7 +18,7 @@ public class PointService {
 
     public PointBalance balance(User user) {
         PointBalanceEntity found = pointBalanceRepository.findByUserId(user.id())
-                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));;
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
         return new PointBalance(found.getUserId(), found.getBalance());
     }
@@ -34,6 +33,6 @@ public class PointService {
                         it.getAmount(),
                         it.getCreatedAt()
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

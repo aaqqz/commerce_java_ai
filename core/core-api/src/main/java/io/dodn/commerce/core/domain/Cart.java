@@ -5,7 +5,6 @@ import io.dodn.commerce.core.support.error.ErrorType;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public record Cart(
         Long userId,
@@ -21,7 +20,7 @@ public record Cart(
                 items.stream()
                         .filter(item -> targetItemIds.contains(item.id()))
                         .map(item -> new NewOrderItem(item.product().id(), item.quantity()))
-                        .collect(Collectors.toList())
+                        .toList()
         );
     }
 }

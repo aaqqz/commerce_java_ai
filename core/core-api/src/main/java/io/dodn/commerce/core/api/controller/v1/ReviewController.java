@@ -23,32 +23,26 @@ public class ReviewController {
             @RequestParam ReviewTargetType targetType,
             @RequestParam Long targetId,
             @RequestParam Integer offset,
-            @RequestParam Integer limit) {
-        var page = reviewService.findReviews(new ReviewTarget(targetType, targetId), new OffsetLimit(offset, limit));
-        return ApiResponse.success(new PageResponse<>(ReviewResponse.of(page.content()), page.hasNext()));
+            @RequestParam Integer limit
+    ) {
+        var page = reviewService.findReviews(new ReviewTarget(targetType, targetId), OffsetLimit.of(offset, limit));
+        return ApiResponse.success(PageResponse.of(ReviewResponse.of(page.content()), page.hasNext()));
     }
 
     @PostMapping("/v1/reviews")
-    public ApiResponse<Object> createReview(
-            User user,
-            @RequestBody AddReviewRequest request) {
+    public ApiResponse<Object> createReview(User user, @RequestBody AddReviewRequest request) {
         reviewService.addReview(user, request.toTarget(), request.toContent());
         return ApiResponse.success();
     }
 
     @PutMapping("/v1/reviews/{reviewId}")
-    public ApiResponse<Object> updateReview(
-            User user,
-            @PathVariable Long reviewId,
-            @RequestBody UpdateReviewRequest request) {
+    public ApiResponse<Object> updateReview(User user, @PathVariable Long reviewId, @RequestBody UpdateReviewRequest request) {
         reviewService.updateReview(user, reviewId, request.toContent());
         return ApiResponse.success();
     }
 
     @DeleteMapping("/v1/reviews/{reviewId}")
-    public ApiResponse<Object> deleteReview(
-            User user,
-            @PathVariable Long reviewId) {
+    public ApiResponse<Object> deleteReview(User user, @PathVariable Long reviewId) {
         reviewService.removeReview(user, reviewId);
         return ApiResponse.success();
     }

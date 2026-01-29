@@ -17,23 +17,19 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
 
     @GetMapping("/v1/favorites")
-    public ApiResponse<PageResponse<FavoriteResponse>> getFavorites(
-            User user,
-            @RequestParam Integer offset,
-            @RequestParam Integer limit) {
-        var page = favoriteService.findFavorites(user, new OffsetLimit(offset, limit));
-        return ApiResponse.success(new PageResponse<>(FavoriteResponse.of(page.content()), page.hasNext()));
+    public ApiResponse<PageResponse<FavoriteResponse>> getFavorites(User user, @RequestParam Integer offset, @RequestParam Integer limit) {
+        var page = favoriteService.findFavorites(user, OffsetLimit.of(offset, limit));
+        return ApiResponse.success(PageResponse.of(FavoriteResponse.of(page.content()), page.hasNext()));
     }
 
     @PostMapping("/v1/favorites")
-    public ApiResponse<Object> applyFavorite(
-            User user,
-            @RequestBody ApplyFavoriteRequest request) {
+    public ApiResponse<Object> applyFavorite(User user, @RequestBody ApplyFavoriteRequest request) {
         if (request.type() == ApplyFavoriteRequestType.FAVORITE) {
             favoriteService.addFavorite(user, request.productId());
         } else if (request.type() == ApplyFavoriteRequestType.UNFAVORITE) {
             favoriteService.removeFavorite(user, request.productId());
         }
+
         return ApiResponse.success();
     }
 }

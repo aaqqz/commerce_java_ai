@@ -24,6 +24,8 @@ public record CouponResponse(
     }
 
     public static List<CouponResponse> of(List<Coupon> coupons) {
-        return coupons.stream().map(CouponResponse::of).toList();
+        return coupons.stream()
+                .map(CouponResponse::of)
+                .toList();
     }
 }

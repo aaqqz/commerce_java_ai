@@ -70,7 +70,7 @@ public class SettlementTargetLoader {
                             item.getTotalPrice()
                     );
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         settlementTargetRepository.saveAll(targets);
     }

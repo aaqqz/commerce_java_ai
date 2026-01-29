@@ -10,8 +10,6 @@ import io.dodn.commerce.core.support.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.stream.Collectors;
-
 @RestController
 @RequiredArgsConstructor
 public class CartController {
@@ -20,28 +18,24 @@ public class CartController {
     @GetMapping("/v1/cart")
     public ApiResponse<CartResponse> getCart(User user) {
         var cart = cartService.getCart(user);
-
-        return ApiResponse.success(new CartResponse(
-                cart.items().stream()
-                        .map(CartItemResponse::of)
-                        .collect(Collectors.toList())
-        ));
+        return ApiResponse.success(
+                new CartResponse(
+                        cart.items().stream()
+                                .map(CartItemResponse::of)
+                                .toList()
+                )
+        );
     }
 
     @PostMapping("/v1/cart/items")
     public ApiResponse<Object> addCartItem(User user, @RequestBody AddCartItemRequest request) {
         cartService.addCartItem(user, request.toAddCartItem());
-
         return ApiResponse.success();
     }
 
     @PutMapping("/v1/cart/items/{cartItemId}")
-    public ApiResponse<Object> modifyCartItem(
-            User user,
-            @PathVariable Long cartItemId,
-            @RequestBody ModifyCartItemRequest request) {
+    public ApiResponse<Object> modifyCartItem(User user, @PathVariable Long cartItemId, @RequestBody ModifyCartItemRequest request) {
         cartService.modifyCartItem(user, request.toModifyCartItem(cartItemId));
-
         return ApiResponse.success();
     }
 

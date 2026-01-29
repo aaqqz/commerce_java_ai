@@ -24,8 +24,11 @@ public class CartService {
     public Cart getCart(User user) {
         List<CartItemEntity> items = cartItemRepository.findByUserIdAndStatus(user.id(), EntityStatus.ACTIVE);
         Map<Long, ProductEntity> productMap = productRepository.findAllById(
-                items.stream().map(CartItemEntity::getProductId).collect(Collectors.toList())
-        ).stream().collect(Collectors.toMap(ProductEntity::getId, p -> p));
+                        items.stream()
+                                .map(CartItemEntity::getProductId)
+                                .toList()
+                ).stream()
+                .collect(Collectors.toMap(ProductEntity::getId, p -> p));
 
         return new Cart(
                 user.id(),
@@ -50,7 +53,7 @@ public class CartService {
                                     it.getQuantity()
                             );
                         })
-                        .collect(Collectors.toList())
+                        .toList()
         );
     }
 
@@ -63,10 +66,11 @@ public class CartService {
                     existing.applyQuantity(item.quantity());
                     return existing;
                 })
-                .orElseGet(() -> {
-                    CartItemEntity created = CartItemEntity.create(user.id(), item.productId(), item.quantity());
-                    return cartItemRepository.save(created);
-                });
+                .orElseGet(() ->
+                    cartItemRepository.save(
+                            CartItemEntity.create(user.id(), item.productId(), item.quantity())
+                    )
+                );
         return found.getId();
     }
 

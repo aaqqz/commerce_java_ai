@@ -87,7 +87,7 @@ public class SettlementService {
                             SettlementState.READY
                     );
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         settlementRepository.saveAll(settlements);
         return settlements.size();

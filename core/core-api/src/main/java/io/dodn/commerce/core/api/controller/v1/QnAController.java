@@ -17,35 +17,25 @@ public class QnAController {
     private final QnAService qnaService;
 
     @GetMapping("/v1/qna")
-    public ApiResponse<PageResponse<QnAResponse>> getQnA(
-            @RequestParam Long productId,
-            @RequestParam Integer offset,
-            @RequestParam Integer limit) {
-        var page = qnaService.findQnA(productId, new OffsetLimit(offset, limit));
-        return ApiResponse.success(new PageResponse<>(QnAResponse.of(page.content()), page.hasNext()));
+    public ApiResponse<PageResponse<QnAResponse>> getQnA(@RequestParam Long productId, @RequestParam Integer offset, @RequestParam Integer limit) {
+        var page = qnaService.findQnA(productId, OffsetLimit.of(offset, limit));
+        return ApiResponse.success(PageResponse.of(QnAResponse.of(page.content()), page.hasNext()));
     }
 
     @PostMapping("/v1/questions")
-    public ApiResponse<Object> createQuestion(
-            User user,
-            @RequestBody AddQuestionRequest request) {
+    public ApiResponse<Object> createQuestion(User user, @RequestBody AddQuestionRequest request) {
         qnaService.addQuestion(user, request.productId(), request.toContent());
         return ApiResponse.success();
     }
 
     @PutMapping("/v1/questions/{questionId}")
-    public ApiResponse<Object> updateQuestion(
-            User user,
-            @PathVariable Long questionId,
-            @RequestBody UpdateQuestionRequest request) {
+    public ApiResponse<Object> updateQuestion(User user, @PathVariable Long questionId, @RequestBody UpdateQuestionRequest request) {
         qnaService.updateQuestion(user, questionId, request.toContent());
         return ApiResponse.success();
     }
 
     @DeleteMapping("/v1/questions/{questionId}")
-    public ApiResponse<Object> deleteQuestion(
-            User user,
-            @PathVariable Long questionId) {
+    public ApiResponse<Object> deleteQuestion(User user, @PathVariable Long questionId) {
         qnaService.removeQuestion(user, questionId);
         return ApiResponse.success();
     }

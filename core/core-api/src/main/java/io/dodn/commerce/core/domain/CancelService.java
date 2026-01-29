@@ -63,30 +63,34 @@ public class CancelService {
         pointHandler.earn(new User(payment.getUserId()), PointType.PAYMENT, payment.getId(), payment.getUsedPoint());
         pointHandler.deduct(new User(payment.getUserId()), PointType.PAYMENT, payment.getId(), PointAmount.PAYMENT);
 
-        CancelEntity cancel = cancelRepository.save(CancelEntity.create(
-                payment.getUserId(),
-                payment.getOrderId(),
-                payment.getId(),
-                payment.getOriginAmount(),
-                payment.getOwnedCouponId(),
-                payment.getCouponDiscount(),
-                payment.getUsedPoint(),
-                payment.getPaidAmount(),
-                payment.getPaidAmount(),
-                "PG_API_응답_취소_고유_값_저장",
-                LocalDateTime.now()
-        ));
+        CancelEntity cancel = cancelRepository.save(
+                CancelEntity.create(
+                        payment.getUserId(),
+                        payment.getOrderId(),
+                        payment.getId(),
+                        payment.getOriginAmount(),
+                        payment.getOwnedCouponId(),
+                        payment.getCouponDiscount(),
+                        payment.getUsedPoint(),
+                        payment.getPaidAmount(),
+                        payment.getPaidAmount(),
+                        "PG_API_응답_취소_고유_값_저장",
+                        LocalDateTime.now()
+                )
+        );
 
-        transactionHistoryRepository.save(TransactionHistoryEntity.create(
-                TransactionType.CANCEL,
-                payment.getUserId(),
-                payment.getOrderId(),
-                payment.getId(),
-                payment.getExternalPaymentKey(),
-                payment.getPaidAmount(),
-                "취소 성공",
-                cancel.getCanceledAt()
-        ));
+        transactionHistoryRepository.save(
+                TransactionHistoryEntity.create(
+                        TransactionType.CANCEL,
+                        payment.getUserId(),
+                        payment.getOrderId(),
+                        payment.getId(),
+                        payment.getExternalPaymentKey(),
+                        payment.getPaidAmount(),
+                        "취소 성공",
+                        cancel.getCanceledAt()
+                )
+        );
 
         return cancel.getId();
     }

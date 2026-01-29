@@ -4,7 +4,6 @@ import io.dodn.commerce.core.domain.Product;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record ProductResponse(
         String name,
@@ -26,6 +25,6 @@ public record ProductResponse(
                         it.price().salesPrice(),
                         it.price().discountedPrice()
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

@@ -28,34 +28,29 @@ public class OrderController {
     private final PointService pointService;
 
     @PostMapping("/v1/orders")
-    public ApiResponse<CreateOrderResponse> create(
-            User user,
-            @RequestBody CreateOrderRequest request) {
+    public ApiResponse<CreateOrderResponse> create(User user, @RequestBody CreateOrderRequest request) {
         String key = orderService.create(user, request.toNewOrder(user));
         return ApiResponse.success(new CreateOrderResponse(key));
     }
 
     @PostMapping("/v1/cart-orders")
-    public ApiResponse<CreateOrderResponse> createFromCart(
-            User user,
-            @RequestBody CreateOrderFromCartRequest request) {
+    public ApiResponse<CreateOrderResponse> createFromCart(User user, @RequestBody CreateOrderFromCartRequest request) {
         var cart = cartService.getCart(user);
         String key = orderService.create(user, cart.toNewOrder(request.cartItemIds()));
         return ApiResponse.success(new CreateOrderResponse(key));
     }
 
     @GetMapping("/v1/orders/{orderKey}/checkout")
-    public ApiResponse<OrderCheckoutResponse> findOrderForCheckout(
-            User user,
-            @PathVariable String orderKey) {
+    public ApiResponse<OrderCheckoutResponse> findOrderForCheckout(User user, @PathVariable String orderKey) {
         var order = orderService.getOrder(user, orderKey, OrderState.CREATED);
         var ownedCoupons = ownedCouponService.getOwnedCouponsForCheckout(
                 user,
                 order.items().stream()
                         .map(io.dodn.commerce.core.domain.OrderItem::productId)
-                        .collect(Collectors.toList())
+                        .toList()
         );
         var pointBalance = pointService.balance(user);
+
         return ApiResponse.success(OrderCheckoutResponse.of(order, ownedCoupons, pointBalance));
     }
 
@@ -66,9 +61,7 @@ public class OrderController {
     }
 
     @GetMapping("/v1/orders/{orderKey}")
-    public ApiResponse<OrderResponse> getOrder(
-            User user,
-            @PathVariable String orderKey) {
+    public ApiResponse<OrderResponse> getOrder(User user, @PathVariable String orderKey) {
         var order = orderService.getOrder(user, orderKey, OrderState.PAID);
         return ApiResponse.success(OrderResponse.of(order));
     }

@@ -81,7 +81,7 @@ public class OrderService {
                             product.getDiscountedPrice().multiply(BigDecimal.valueOf(item.quantity()))
                     );
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         orderItemRepository.saveAll(orderItems);
 
@@ -90,8 +90,7 @@ public class OrderService {
 
     @Transactional
     public List<OrderSummary> getOrders(User user) {
-        List<OrderEntity> orders = orderRepository.findByUserIdAndStateAndStatusOrderByIdDesc(
-                user.id(), OrderState.PAID, EntityStatus.ACTIVE);
+        List<OrderEntity> orders = orderRepository.findByUserIdAndStateAndStatusOrderByIdDesc(user.id(), OrderState.PAID, EntityStatus.ACTIVE);
         if (orders.isEmpty()) {
             return List.of();
         }
@@ -105,7 +104,7 @@ public class OrderService {
                         it.getTotalPrice(),
                         it.getState()
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -140,7 +139,7 @@ public class OrderService {
                                 it.getUnitPrice(),
                                 it.getTotalPrice()
                         ))
-                        .collect(Collectors.toList())
+                        .toList()
         );
     }
 }

@@ -28,15 +28,17 @@ public class PointHandler {
         // NOTE: 모든 유저는 가입 시 Point 테이블 생성
         PointBalanceEntity balance = pointBalanceRepository.findByUserId(user.id())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
-
         balance.apply(amount);
-        pointHistoryRepository.save(PointHistoryEntity.create(
-                user.id(),
-                type,
-                targetId,
-                amount,
-                balance.getBalance()
-        ));
+
+        pointHistoryRepository.save(
+                PointHistoryEntity.create(
+                        user.id(),
+                        type,
+                        targetId,
+                        amount,
+                        balance.getBalance()
+                )
+        );
     }
 
     @Transactional
@@ -47,15 +49,17 @@ public class PointHandler {
 
         // NOTE: 모든 유저는 가입 시 Point 테이블 생성
         PointBalanceEntity balance = pointBalanceRepository.findByUserId(user.id())
-                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));;
-
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
         balance.apply(amount.negate());
-        pointHistoryRepository.save(PointHistoryEntity.create(
-                user.id(),
-                type,
-                targetId,
-                amount.negate(),
-                balance.getBalance()
-        ));
+
+        pointHistoryRepository.save(
+                PointHistoryEntity.create(
+                        user.id(),
+                        type,
+                        targetId,
+                        amount.negate(),
+                        balance.getBalance()
+                )
+        );
     }
 }

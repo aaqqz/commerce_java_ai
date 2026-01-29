@@ -17,6 +17,7 @@ public class PointController {
     public ApiResponse<PointResponse> getPoint(User user) {
         var balance = pointService.balance(user);
         var histories = pointService.histories(user);
+
         return ApiResponse.success(PointResponse.of(balance, histories));
     }
 }

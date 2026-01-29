@@ -18,6 +18,8 @@ public record FavoriteResponse(
     }
 
     public static List<FavoriteResponse> of(List<Favorite> favorites) {
-        return favorites.stream().map(FavoriteResponse::of).toList();
+        return favorites.stream()
+                .map(FavoriteResponse::of)
+                .toList();
     }
 }

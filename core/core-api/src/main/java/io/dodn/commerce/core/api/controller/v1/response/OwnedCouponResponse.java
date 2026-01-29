@@ -27,6 +27,8 @@ public record OwnedCouponResponse(
     }
 
     public static List<OwnedCouponResponse> of(List<OwnedCoupon> ownedCoupons) {
-        return ownedCoupons.stream().map(OwnedCouponResponse::of).toList();
+        return ownedCoupons.stream()
+                .map(OwnedCouponResponse::of)
+                .toList();
     }
 }

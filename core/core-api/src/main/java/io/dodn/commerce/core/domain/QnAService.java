@@ -31,7 +31,9 @@ public class QnAService {
         );
 
         Map<Long, AnswerEntity> answers = answerRepository.findByQuestionIdIn(
-                        questions.getContent().stream().map(QuestionEntity::getId).collect(Collectors.toList())
+                        questions.getContent().stream()
+                                .map(QuestionEntity::getId)
+                                .toList()
                 ).stream()
                 .filter(AnswerEntity::isActive)
                 .collect(Collectors.toMap(AnswerEntity::getQuestionId, a -> a));
@@ -47,24 +49,28 @@ public class QnAService {
                                 ),
                                 answers.containsKey(it.getId())
                                         ? new Answer(
-                                        answers.get(it.getId()).getId(),
-                                        answers.get(it.getId()).getAdminId(),
-                                        answers.get(it.getId()).getContent()
-                                )
+                                                answers.get(it.getId()).getId(),
+                                                answers.get(it.getId()).getAdminId(),
+                                                answers.get(it.getId()).getContent()
+                                        )
                                         : Answer.EMPTY
+
                         ))
-                        .collect(Collectors.toList()),
+                        .toList(),
                 questions.hasNext()
         );
     }
 
     public Long addQuestion(User user, Long productId, QuestionContent content) {
-        QuestionEntity saved = questionRepository.save(QuestionEntity.create(
-                user.id(),
-                productId,
-                content.title(),
-                content.content()
-        ));
+        QuestionEntity saved = questionRepository.save(
+                QuestionEntity.create(
+                        user.id(),
+                        productId,
+                        content.title(),
+                        content.content()
+                )
+        );
+
         return saved.getId();
     }
 
@@ -75,18 +81,22 @@ public class QnAService {
         if (!found.isActive()) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);
         }
+
         found.updateContent(content.title(), content.content());
+
         return found.getId();
     }
 
     @Transactional
     public Long removeQuestion(User user, Long questionId) {
         QuestionEntity found = questionRepository.findByIdAndUserId(questionId, user.id())
-                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));;
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
         if (!found.isActive()) {
             throw new CoreException(ErrorType.NOT_FOUND_DATA);
         }
+
         found.delete();
+
         return found.getId();
     }
 

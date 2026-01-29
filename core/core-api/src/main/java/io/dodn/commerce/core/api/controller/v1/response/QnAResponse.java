@@ -21,6 +21,8 @@ public record QnAResponse(
     }
 
     public static List<QnAResponse> of(List<QnA> qna) {
-        return qna.stream().map(QnAResponse::of).toList();
+        return qna.stream()
+                .map(QnAResponse::of)
+                .toList();
     }
 }

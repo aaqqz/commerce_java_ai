@@ -6,7 +6,6 @@ import io.dodn.commerce.core.domain.PointBalance;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record OrderCheckoutResponse(
         String key,
@@ -31,7 +30,7 @@ public record OrderCheckoutResponse(
                                 it.unitPrice(),
                                 it.totalPrice()
                         ))
-                        .collect(Collectors.toList()),
+                        .toList(),
                 OwnedCouponResponse.of(coupons),
                 point.balance()
         );

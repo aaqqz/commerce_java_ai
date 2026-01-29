@@ -5,7 +5,6 @@ import io.dodn.commerce.core.enums.OrderState;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record OrderListResponse(
         String key,
@@ -25,6 +24,6 @@ public record OrderListResponse(
     public static List<OrderListResponse> of(List<OrderSummary> orders) {
         return orders.stream()
                 .map(OrderListResponse::of)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

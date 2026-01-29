@@ -53,7 +53,7 @@ public class OwnedCouponService {
                             )
                     );
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public void download(User user, Long couponId) {
@@ -63,11 +63,13 @@ public class OwnedCouponService {
         ownedCouponRepository.findByUserIdAndCouponId(user.id(), couponId)
                 .orElseThrow(() -> new CoreException(ErrorType.COUPON_ALREADY_DOWNLOADED));
 
-        ownedCouponRepository.save(OwnedCouponEntity.create(
-                user.id(),
-                coupon.getId(),
-                OwnedCouponState.DOWNLOADED
-        ));
+        ownedCouponRepository.save(
+                OwnedCouponEntity.create(
+                        user.id(),
+                        coupon.getId(),
+                        OwnedCouponState.DOWNLOADED
+                )
+        );
     }
 
     public List<OwnedCoupon> getOwnedCouponsForCheckout(User user, Collection<Long> productIds) {
@@ -78,14 +80,11 @@ public class OwnedCouponService {
         Map<Long, CouponEntity> applicableCouponMap = couponRepository.findApplicableCouponIds(productIds)
                 .stream()
                 .collect(Collectors.toMap(CouponEntity::getId, c -> c));
-
         if (applicableCouponMap.isEmpty()) {
             return List.of();
         }
 
-        List<OwnedCouponEntity> ownedCoupons = ownedCouponRepository.findOwnedCouponIds(
-                user.id(), applicableCouponMap.keySet(), LocalDateTime.now());
-
+        List<OwnedCouponEntity> ownedCoupons = ownedCouponRepository.findOwnedCouponIds(user.id(), applicableCouponMap.keySet(), LocalDateTime.now());
         if (ownedCoupons.isEmpty()) {
             return List.of();
         }
@@ -106,6 +105,6 @@ public class OwnedCouponService {
                             )
                     );
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 }

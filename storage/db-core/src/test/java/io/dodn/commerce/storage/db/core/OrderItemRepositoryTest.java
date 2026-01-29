@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -184,7 +183,7 @@ public class OrderItemRepositoryTest extends CoreDbContextTest {
         );
 
         // then
-        List<Long> resultIds = result.stream().map(OrderItemEntity::getId).collect(Collectors.toList());
+        List<Long> resultIds = result.stream().map(OrderItemEntity::getId).toList();
         assertThat(resultIds).containsExactly(includedItem.getId());
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +27,7 @@ public class FavoriteService {
                 cutoff,
                 offsetLimit.toPageable()
         );
+
         return new Page<>(
                 result.getContent().stream()
                         .map(it -> new Favorite(
@@ -36,33 +36,34 @@ public class FavoriteService {
                                 it.getProductId(),
                                 it.getFavoritedAt()
                         ))
-                        .collect(Collectors.toList()),
+                        .toList(),
                 result.hasNext()
         );
     }
 
     @Transactional
     public Long addFavorite(User user, Long productId) {
-        FavoriteEntity existing = favoriteRepository.findByUserIdAndProductId(user.id(), productId);
-        if (existing == null) {
-            FavoriteEntity saved = favoriteRepository.save(FavoriteEntity.create(
-                    user.id(),
-                    productId,
-                    LocalDateTime.now()
-            ));
-            return saved.getId();
-        } else {
-            existing.favorite();
-            return existing.getId();
-        }
+        FavoriteEntity found = favoriteRepository.findByUserIdAndProductId(user.id(), productId)
+                .map(entity -> {
+                    entity.active();
+                    return entity;
+                })
+                .orElseGet(() -> favoriteRepository.save(
+                        FavoriteEntity.create(
+                                user.id(),
+                                productId,
+                                LocalDateTime.now()
+                        )
+                ));
+
+        return found.getId();
     }
 
     @Transactional
     public Long removeFavorite(User user, Long productId) {
-        FavoriteEntity existing = favoriteRepository.findByUserIdAndProductId(user.id(), productId);
-        if (existing == null) {
-            throw new CoreException(ErrorType.NOT_FOUND_DATA);
-        }
+        FavoriteEntity existing = favoriteRepository.findByUserIdAndProductId(user.id(), productId)
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
+
         existing.delete();
         return existing.getId();
     }

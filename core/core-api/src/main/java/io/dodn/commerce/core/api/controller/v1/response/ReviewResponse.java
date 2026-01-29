@@ -27,6 +27,6 @@ public record ReviewResponse(
     public static List<ReviewResponse> of(List<Review> reviews) {
         return reviews.stream()
                 .map(ReviewResponse::of)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

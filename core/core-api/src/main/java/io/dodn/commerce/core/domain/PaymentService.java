@@ -84,25 +84,25 @@ public class PaymentService {
         order.paid();
 
         if (payment.hasAppliedCoupon()) {
-            OwnedCouponEntity ownedCoupon = ownedCouponRepository.findById(payment.getOwnedCouponId()).orElse(null);
-            if (ownedCoupon != null) {
-                ownedCoupon.use();
-            }
+            ownedCouponRepository.findById(payment.getOwnedCouponId())
+                    .ifPresent(OwnedCouponEntity::use);
         }
 
         pointHandler.deduct(new User(payment.getUserId()), PointType.PAYMENT, payment.getId(), payment.getUsedPoint());
         pointHandler.earn(new User(payment.getUserId()), PointType.PAYMENT, payment.getId(), PointAmount.PAYMENT);
 
-        transactionHistoryRepository.save(TransactionHistoryEntity.create(
-                TransactionType.PAYMENT,
-                order.getUserId(),
-                order.getId(),
-                payment.getId(),
-                externalPaymentKey,
-                payment.getPaidAmount(),
-                "결제 성공",
-                payment.getPaidAt()
-        ));
+        transactionHistoryRepository.save(
+                TransactionHistoryEntity.create(
+                        TransactionType.PAYMENT,
+                        order.getUserId(),
+                        order.getId(),
+                        payment.getId(),
+                        externalPaymentKey,
+                        payment.getPaidAmount(),
+                        "결제 성공",
+                        payment.getPaidAt()
+                )
+        );
         return payment.getId();
     }
 
@@ -113,15 +113,17 @@ public class PaymentService {
         PaymentEntity payment = paymentRepository.findByOrderId(order.getId())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND_DATA));
 
-        transactionHistoryRepository.save(TransactionHistoryEntity.create(
-                TransactionType.PAYMENT_FAIL,
-                order.getUserId(),
-                order.getId(),
-                payment.getId(),
-                "",
-                BigDecimal.valueOf(-1),
-                "[" + code + "] " + message,
-                LocalDateTime.now()
-        ));
+        transactionHistoryRepository.save(
+                TransactionHistoryEntity.create(
+                        TransactionType.PAYMENT_FAIL,
+                        order.getUserId(),
+                        order.getId(),
+                        payment.getId(),
+                        "",
+                        BigDecimal.valueOf(-1),
+                        "[" + code + "] " + message,
+                        LocalDateTime.now()
+                )
+        );
     }
 }

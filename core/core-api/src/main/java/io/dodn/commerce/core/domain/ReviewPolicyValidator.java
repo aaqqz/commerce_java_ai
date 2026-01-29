@@ -32,10 +32,9 @@ public class ReviewPolicyValidator {
                             EntityStatus.ACTIVE
                     ).stream()
                     .map(it -> "ORDER_ITEM_" + it.getId())
-                    .collect(Collectors.toList());
+                    .toList();
 
-            Set<String> existReviewKeys = reviewRepository.findByUserIdAndReviewKeyIn(user.id(), reviewKeys)
-                    .stream()
+            Set<String> existReviewKeys = reviewRepository.findByUserIdAndReviewKeyIn(user.id(), reviewKeys).stream()
                     .map(ReviewEntity::getReviewKey)
                     .collect(Collectors.toSet());
 

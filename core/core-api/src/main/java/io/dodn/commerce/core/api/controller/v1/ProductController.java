@@ -28,11 +28,7 @@ public class ProductController {
     private final CouponService couponService;
 
     @GetMapping("/v1/products")
-    public ApiResponse<PageResponse<ProductResponse>> findProducts(
-            @RequestParam Long categoryId,
-            @RequestParam Integer offset,
-            @RequestParam Integer limit
-    ) {
+    public ApiResponse<PageResponse<ProductResponse>> findProducts(@RequestParam Long categoryId, @RequestParam Integer offset, @RequestParam Integer limit) {
         var result = productService.findProducts(categoryId, OffsetLimit.of(offset, limit));
 
         return ApiResponse.success(PageResponse.of(ProductResponse.of(result.content()), result.hasNext()));

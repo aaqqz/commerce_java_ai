@@ -5,7 +5,6 @@ import io.dodn.commerce.core.enums.OrderState;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record OrderResponse(
         String key,
@@ -30,7 +29,7 @@ public record OrderResponse(
                                 it.unitPrice(),
                                 it.totalPrice()
                         ))
-                        .collect(Collectors.toList())
+                        .toList()
         );
     }
 }
