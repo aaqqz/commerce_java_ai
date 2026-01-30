@@ -57,18 +57,19 @@
 
 ### Controller의 Service 조합 전략 - AI 제안 + 팀 논의 사항
 - Controller가 Service 를 직접 조합하지 않는다
-- Service 조합을 위한 `Assembler` 클래스를 구성한다
+- 서비스 조합이 필요한 경우 Facade 를 도입한다
+- Facade 가 유스케이스 흐름을 담당하고 Controller 는 요청/응답 처리에 집중한다
 - Presentation Layer(Controller) 는 Web,APP UI 요구사항에 따라 요청을 처리해야하는 경우가 많으므로 비교적 중요한 영역이라고 보지 않는다
 
-### Assembler 클래스 구현 규칙
-- Assembler 는 요구사항 중 UI를 위한 처리나, 비즈니스 로직이 아닌 부분을 해소하기 위해 사용한다
-- 패키지를 `io.dodn.commerce.core.api.assembler` 로 명명한다
-- 추후 오용을 없애기 위해 Facade 나 UseCase 를 명시적으로 사용하지 않는다
-- Assembler는 Presentation Layer에 존재한다
-- Assembler는 *Service 클래스만을 참조 가능하다
-- Assembler는 *Finder, *Reader, *Manager 등 Logic Layer의 클래스를 절대 참조할 수 없다
-- Assembler는 JPA Repository 등 Data Access Layer 클래스를 절대 참조 할 수 없다
-- Assembler는 “서비스 조합이 필요한 경우에만” 도입한다. 요구사항상 조합이 불필요한 경우 미도입을 허용한다.
+### Facade 패턴 구현 규칙
+- Facade 는 요구사항 중 서비스 조합이 필요한 경우에만 사용한다
+- 패키지를 `io.dodn.commerce.core.api.facade` 로 명명한다
+- Facade는 Presentation Layer에 존재한다
+- Facade는 *Service 클래스만을 참조 가능하다
+- Facade는 *Finder, *Reader, *Manager 등 Logic Layer의 클래스를 절대 참조할 수 없다
+- Facade는 JPA Repository 등 Data Access Layer 클래스를 절대 참조 할 수 없다
+- Facade 도입이 불필요한 경우 미도입을 허용한다
+- Facade 클래스명은 `*Facade` 규칙을 사용한다
 - 도입하지 않더라도 기존 제약(위치: Presentation Layer, 참조: Service만 허용)은 유지된다.
 
 ### 클래스 네이밍 규칙
