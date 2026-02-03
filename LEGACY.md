@@ -91,7 +91,7 @@
 
 ### 3.1 @Transactional 적용 기준 불명확
 **현상:**
-- 읽기 전용 메서드에 `@Transactional` 적용 (readOnly 미지정): `OrderService.getOrders()`
+- 읽기 전용 메서드에 `@Transactional` 적용 : `OrderService.getOrders()`
 - 쓰기 작업인데 `@Transactional` 누락: `PaymentService.fail()`
 - `ReviewService`의 모든 쓰기 메서드에 `@Transactional` 누락
 - `QnAService`는 `jakarta.transaction.Transactional`을 사용하지만, 다른 서비스는 `org.springframework.transaction.annotation.Transactional` 사용
@@ -106,6 +106,7 @@
   - 읽기 전용: `@Transactional(readOnly = true)` 사용 또는 생략
   - 쓰기 작업: 반드시 `@Transactional` 적용
 - 서비스 클래스 레벨에 기본 정책 적용 후 메서드별 오버라이드
+- ReviewService의 쓰기 메서드들에 트랜잭션 추가
 - 동일한 트랜잭션 어노테이션 패키지로 통일
 
 **관련 파일:**
@@ -126,7 +127,7 @@
 **개선 방향:**
 - 트랜잭션 경계를 명확히 정의
 - 도메인 이벤트 발행 시점 정립 (트랜잭션 내 vs 커밋 후)
-- 필요 시 보상 트랜잭션 패턴 고려
+- 필요 시 분산 트랜잭션 또는 보상 트랜잭션 패턴 고려
 
 ---
 
@@ -181,7 +182,7 @@
 **현상:**
 - `CartItemResponse.of(cartItem)` - 정적 팩토리 `of`
 - `OrderCheckoutResponse.of(order, ownedCoupons, pointBalance)` - 정적 팩토리 `of` + 복수 파라미터
-- `ProductResponse.of(result.content())` - 정적 팩토리 `of`
+- `ProductResponse.of(result.content)` - 정적 팩토리 `of`
 
 **문제점:**
 - `of` 메서드가 단일 도메인 객체를 받을 때와 복수 파라미터를 받을 때가 혼재
