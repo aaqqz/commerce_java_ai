@@ -118,7 +118,7 @@
 - Logic Layer = @Component
 
 ### API 응답 타입의 일관성 규칙
-- 응답이 필요 없는 경우 `ApiResponse<Any>`
+- 응답이 필요 없는 경우 `ApiResponse<Object>`
 - 그 외에는 상황에 맞춰 단일 응답과 목록 응답을 사용 할 수 있다
 
 ### 개념 객체 패키지 규칙 - 팀 논의 사항
@@ -153,7 +153,7 @@
 
 ### 리팩토링 전환 원칙(서비스 API 안정성)
 - Logic Layer(Reader/Manager 등) 도입을 통한 내부 구조 개선 시, 외부 공개 `*Service`의 퍼블릭 시그니처는 가능하면 유지한다.
-- 전환 과정에서는 `*Service`가 새 Logic 컴포넌트로 위임하도록 구현하고, 호출자(Controller/Assembler)의 변경을 최소화한다.
+- 전환 과정에서는 `*Service`가 새 Logic 컴포넌트로 위임하도록 구현하고, 호출자(Controller/Facade)의 변경을 최소화한다.
 - 위임 후 정리: 모든 호출부가 새 Logic 컴포넌트를 직접 사용하게 된 경우에만 구형 함수를 제거하거나 정리한다.
 
 ### Data Access 성능 점검(확장)
