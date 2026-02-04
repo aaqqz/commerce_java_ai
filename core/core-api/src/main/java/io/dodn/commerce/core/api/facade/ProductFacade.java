@@ -6,6 +6,7 @@ import io.dodn.commerce.core.domain.CouponService;
 import io.dodn.commerce.core.domain.FavoriteService;
 import io.dodn.commerce.core.domain.OrderService;
 import io.dodn.commerce.core.domain.Product;
+import io.dodn.commerce.core.domain.ProductOptionService;
 import io.dodn.commerce.core.domain.ProductSectionService;
 import io.dodn.commerce.core.domain.ProductService;
 import io.dodn.commerce.core.domain.ReviewService;
@@ -47,10 +48,11 @@ public class ProductFacade {
 
     public ProductDetailResponse findProduct(Long productId) {
         var product = productService.findProduct(productId);
+        var options = productService.findOptions(productId);
         var sections = productSectionService.findSections(productId);
         var rateSummary = reviewService.findRateSummary(new ReviewTarget(ReviewTargetType.PRODUCT, productId));
         var coupons = couponService.getCouponsForProducts(List.of(productId));
 
-        return ProductDetailResponse.of(product, sections, rateSummary, coupons);
+        return ProductDetailResponse.of(product, options, sections, rateSummary, coupons);
     }
 }

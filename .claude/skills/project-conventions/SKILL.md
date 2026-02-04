@@ -72,6 +72,7 @@ allowed-tools: [Read, Edit, Write, Grep, Glob, Bash]
 
 ### Facade 패턴 구현 규칙
 - Facade 는 요구사항 중 서비스 조합이 필요한 경우에만 사용한다
+- Facade 는 요구사항 중 UI를 위한 처리나, 비지니스 로직이 아닌 부분을 해소하기 위해 사용한다
 - 패키지를 `io.dodn.commerce.core.api.facade` 로 명명한다
 - Facade는 Presentation Layer에 존재한다
 - Facade는 *Service 클래스만을 참조 가능하다

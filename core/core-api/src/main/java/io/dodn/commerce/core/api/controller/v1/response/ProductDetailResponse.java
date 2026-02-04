@@ -1,13 +1,9 @@
 package io.dodn.commerce.core.api.controller.v1.response;
 
-import io.dodn.commerce.core.domain.Coupon;
-import io.dodn.commerce.core.domain.Product;
-import io.dodn.commerce.core.domain.ProductSection;
-import io.dodn.commerce.core.domain.RateSummary;
+import io.dodn.commerce.core.domain.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record ProductDetailResponse(
         String name,
@@ -19,11 +15,13 @@ public record ProductDetailResponse(
         BigDecimal discountedPrice,
         BigDecimal rate,
         Long rateCount,
+        List<ProductOptionResponse> options,
         List<ProductSectionResponse> sections,
         List<CouponResponse> coupons
 ) {
     public static ProductDetailResponse of(
             Product product,
+            List<ProductOption> options,
             List<ProductSection> sections,
             RateSummary rateSummary,
             List<Coupon> coupons
@@ -38,6 +36,16 @@ public record ProductDetailResponse(
                 product.price().discountedPrice(),
                 rateSummary.rate(),
                 rateSummary.count(),
+                options.stream()
+                        .map(it -> new ProductOptionResponse(
+                                it.id(),
+                                it.name(),
+                                it.description(),
+                                it.price().costPrice(),
+                                it.price().salesPrice(),
+                                it.price().discountedPrice()
+                        ))
+                        .toList(),
                 sections.stream()
                         .map(it -> new ProductSectionResponse(it.type(), it.content()))
                         .toList(),
