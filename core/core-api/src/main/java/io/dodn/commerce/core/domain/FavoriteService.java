@@ -13,11 +13,14 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
+    private final FavoriteFinder favoriteFinder;
 
     public Page<Favorite> findFavorites(User user, OffsetLimit offsetLimit) {
         LocalDateTime cutoff = LocalDateTime.now().minusDays(30);
@@ -66,5 +69,9 @@ public class FavoriteService {
 
         existing.delete();
         return existing.getId();
+    }
+
+    public Map<Long, Long> recentCount(List<Long> productIds, LocalDateTime from) {
+        return favoriteFinder.countByProductIds(productIds, from);
     }
 }

@@ -66,7 +66,7 @@ allowed-tools: [Read, Edit, Write, Grep, Glob, Bash]
 
 ### Controller의 Service 조합 전략 - AI 제안 + 팀 논의 사항
 - Controller가 Service 를 직접 조합하지 않는다
-- 서비스 조합이 필요한 경우 Facade 를 도입한다
+- Service 조합을 위한 `Facade` 클래스를 구성한다
 - Facade 가 유스케이스 흐름을 담당하고 Controller 는 요청/응답 처리에 집중한다
 - Presentation Layer(Controller) 는 Web,APP UI 요구사항에 따라 요청을 처리해야하는 경우가 많으므로 비교적 중요한 영역이라고 보지 않는다
 
@@ -75,7 +75,7 @@ allowed-tools: [Read, Edit, Write, Grep, Glob, Bash]
 - 패키지를 `io.dodn.commerce.core.api.facade` 로 명명한다
 - Facade는 Presentation Layer에 존재한다
 - Facade는 *Service 클래스만을 참조 가능하다
-- Facade는 *Finder, *Reader, *Manager 등 Logic Layer의 클래스를 절대 참조할 수 없다
+- Facade는 *Finder, *Reader, *Manager 등 Logic Layer의 클래스를 절대 참조 할 수 없다
 - Facade는 JPA Repository 등 Data Access Layer 클래스를 절대 참조 할 수 없다
 - Facade 도입이 불필요한 경우 미도입을 허용한다
 - Facade 클래스명은 `*Facade` 규칙을 사용한다

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
+    private final OrderFinder orderFinder;
 
     @Transactional
     public String create(User user, NewOrder newOrder) {
@@ -141,5 +143,9 @@ public class OrderService {
                         ))
                         .toList()
         );
+    }
+
+    public Map<Long, Long> recentCount(List<Long> productIds, LocalDateTime from) {
+        return orderFinder.countOrdersByProductIds(productIds, from);
     }
 }
