@@ -71,4 +71,26 @@ public class ProductFinder {
                 .map(it -> new ProductSection(it.getType(), it.getContent()))
                 .toList();
     }
+
+    public List<Product> findByIds(List<Long> productIds) {
+        if (productIds == null || productIds.isEmpty()) {
+            return List.of();
+        }
+
+        return productRepository.findByIdInAndStatus(productIds, EntityStatus.ACTIVE)
+                .stream()
+                .map(entity -> new Product(
+                        entity.getId(),
+                        entity.getName(),
+                        entity.getThumbnailUrl(),
+                        entity.getDescription(),
+                        entity.getShortDescription(),
+                        new Price(
+                                entity.getCostPrice(),
+                                entity.getSalesPrice(),
+                                entity.getDiscountedPrice()
+                        )
+                ))
+                .toList();
+    }
 }
