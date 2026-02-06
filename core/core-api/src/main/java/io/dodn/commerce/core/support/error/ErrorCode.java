@@ -29,5 +29,6 @@ public enum ErrorCode {
     // 리뷰
     E7000,
     E7001,
-    E7002
+    E7002,
+    E7003,
 }

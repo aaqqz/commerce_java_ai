@@ -5,15 +5,18 @@ import io.dodn.commerce.core.domain.ReviewTarget;
 import io.dodn.commerce.core.enums.ReviewTargetType;
 import io.dodn.commerce.core.support.error.CoreException;
 import io.dodn.commerce.core.support.error.ErrorType;
+import io.dodn.commerce.core.support.file.ImageHandle;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public record AddReviewRequest(
         Long userId,
         ReviewTargetType targetType,
         Long targetId,
         BigDecimal rate,
-        String content
+        String content,
+        List<Long> images
 ) {
     public ReviewTarget toTarget() {
         return new ReviewTarget(targetType, targetId);
@@ -25,5 +28,12 @@ public record AddReviewRequest(
         if (content.isEmpty()) throw new CoreException(ErrorType.INVALID_REQUEST);
 
         return new ReviewContent(rate, content);
+    }
+
+    public ImageHandle toImageHandle() {
+        List<Long> list = images != null ? images : List.of();
+        if (list.size() > 5) throw new CoreException(ErrorType.INVALID_REQUEST);
+
+        return new ImageHandle(list, List.of());
     }
 }

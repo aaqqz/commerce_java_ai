@@ -23,21 +23,22 @@ public class ReviewController {
             @RequestParam ReviewTargetType targetType,
             @RequestParam Long targetId,
             @RequestParam Integer offset,
-            @RequestParam Integer limit
+            @RequestParam Integer limit,
+            @RequestParam(required = false, defaultValue = "false") Boolean imageOnly
     ) {
-        var page = reviewService.findReviews(new ReviewTarget(targetType, targetId), OffsetLimit.of(offset, limit));
+        var page = reviewService.findReviews(new ReviewTarget(targetType, targetId), OffsetLimit.of(offset, limit), imageOnly);
         return ApiResponse.success(PageResponse.of(ReviewResponse.of(page.content()), page.hasNext()));
     }
 
     @PostMapping("/v1/reviews")
     public ApiResponse<Object> createReview(User user, @RequestBody AddReviewRequest request) {
-        reviewService.addReview(user, request.toTarget(), request.toContent());
+        reviewService.addReview(user, request.toTarget(), request.toContent(), request.toImageHandle());
         return ApiResponse.success();
     }
 
     @PutMapping("/v1/reviews/{reviewId}")
     public ApiResponse<Object> updateReview(User user, @PathVariable Long reviewId, @RequestBody UpdateReviewRequest request) {
-        reviewService.updateReview(user, reviewId, request.toContent());
+        reviewService.updateReview(user, reviewId, request.toContent(), request.toImageHandle());
         return ApiResponse.success();
     }
 
