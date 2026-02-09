@@ -23,8 +23,8 @@ public class FavoriteController {
             @RequestParam Integer offset,
             @RequestParam Integer limit
     ) {
-        var page = favoriteService.findFavorites(user, OffsetLimit.of(offset, limit));
-        return ApiResponse.success(PageResponse.of(FavoriteResponse.of(page.content()), page.hasNext()));
+        var page = favoriteFacade.getFavorites(user, OffsetLimit.of(offset, limit));
+        return ApiResponse.success(PageResponse.of(page.content(), page.hasNext()));
     }
 
     @PostMapping("/v1/favorites")

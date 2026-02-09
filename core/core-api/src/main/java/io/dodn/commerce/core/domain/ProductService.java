@@ -24,4 +24,8 @@ public class ProductService {
     public List<ProductOption> findOptions(Long productId) {
         return productOptionFinder.find(productId);
     }
+
+    public List<Product> findProducts(List<Long> productIds) {
+        return productFinder.find(productIds);
+    }
 }

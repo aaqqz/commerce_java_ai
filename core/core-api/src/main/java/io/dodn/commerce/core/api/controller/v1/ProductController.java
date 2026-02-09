@@ -19,8 +19,8 @@ public class ProductController {
 
     @GetMapping("/v1/products")
     public ApiResponse<PageResponse<ProductResponse>> findProducts(@RequestParam Long categoryId, @RequestParam Integer offset, @RequestParam Integer limit) {
-        var result = productFacade.findProducts(categoryId, OffsetLimit.of(offset, limit));
-        return ApiResponse.success(PageResponse.of(result.content(), result.hasNext()));
+        var page = productFacade.findProducts(categoryId, OffsetLimit.of(offset, limit));
+        return ApiResponse.success(PageResponse.of(page.content(), page.hasNext()));
     }
 
     @GetMapping("/v1/products/{productId}")
