@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public record Favorite(
         Long id,
         Long userId,
-        Long productId,
+        FavoriteTarget target,
         LocalDateTime favoritedAt
 ) {
 }

@@ -1,6 +1,12 @@
 package io.dodn.commerce.storage.db.core;
 
 public interface TargetCountProjection {
-    Long getProductId();
+    Long getTargetId();
+
+    @Deprecated
+    default Long getProductId() {
+        return getTargetId();
+    }
+
     Long getCount();
 }
