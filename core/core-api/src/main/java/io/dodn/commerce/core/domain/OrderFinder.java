@@ -31,7 +31,7 @@ public class OrderFinder {
 
         return results.stream()
                 .collect(Collectors.toMap(
-                        TargetCountProjection::getProductId,
+                        TargetCountProjection::getTargetId,
                         TargetCountProjection::getCount
                 ));
     }

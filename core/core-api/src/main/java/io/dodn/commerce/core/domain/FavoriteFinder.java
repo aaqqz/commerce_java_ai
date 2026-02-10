@@ -1,6 +1,7 @@
 package io.dodn.commerce.core.domain;
 
 import io.dodn.commerce.core.enums.EntityStatus;
+import io.dodn.commerce.core.enums.FavoriteTargetType;
 import io.dodn.commerce.core.support.OffsetLimit;
 import io.dodn.commerce.core.support.Page;
 import io.dodn.commerce.storage.db.core.FavoriteEntity;
@@ -20,10 +21,11 @@ import java.util.stream.Collectors;
 public class FavoriteFinder {
     private final FavoriteRepository favoriteRepository;
 
-    public Page<Favorite> findFavorites(User user, OffsetLimit offsetLimit) {
+    public Page<Favorite> findFavorites(User user, FavoriteTargetType targetType, OffsetLimit offsetLimit) {
         LocalDateTime cutoff = LocalDateTime.now().minusDays(30);
-        Slice<FavoriteEntity> result = favoriteRepository.findByUserIdAndStatusAndUpdatedAtAfter(
+        Slice<FavoriteEntity> result = favoriteRepository.findByUserIdAndTargetTypeAndStatusAndUpdatedAtAfter(
                 user.id(),
+                targetType,
                 EntityStatus.ACTIVE,
                 cutoff,
                 offsetLimit.toPageable()
@@ -34,7 +36,8 @@ public class FavoriteFinder {
                         .map(it -> new Favorite(
                                 it.getId(),
                                 it.getUserId(),
-                                it.getProductId(),
+                                it.getTargetType(),
+                                it.getTargetId(),
                                 it.getFavoritedAt()
                         ))
                         .toList(),
@@ -49,13 +52,14 @@ public class FavoriteFinder {
 
         List<TargetCountProjection> results = favoriteRepository.countByProductIdsAndStatusAndFavoritedAtAfter(
                 productIds,
+                FavoriteTargetType.PRODUCT,
                 EntityStatus.ACTIVE,
                 from
         );
 
         return results.stream()
                 .collect(Collectors.toMap(
-                        TargetCountProjection::getProductId,
+                        TargetCountProjection::getTargetId,
                         TargetCountProjection::getCount
                 ));
     }

@@ -48,7 +48,8 @@ public class CartService {
                                                     product.getCostPrice(),
                                                     product.getSalesPrice(),
                                                     product.getDiscountedPrice()
-                                            )
+                                            ),
+                                            product.getUpdatedAt()
                                     ),
                                     it.getQuantity()
                             );

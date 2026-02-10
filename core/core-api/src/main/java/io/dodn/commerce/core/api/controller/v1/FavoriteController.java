@@ -3,8 +3,8 @@ package io.dodn.commerce.core.api.controller.v1;
 import io.dodn.commerce.core.api.controller.v1.request.ApplyFavoriteRequest;
 import io.dodn.commerce.core.api.controller.v1.response.FavoriteResponse;
 import io.dodn.commerce.core.api.facade.FavoriteFacade;
-import io.dodn.commerce.core.domain.FavoriteService;
 import io.dodn.commerce.core.domain.User;
+import io.dodn.commerce.core.enums.FavoriteTargetType;
 import io.dodn.commerce.core.support.OffsetLimit;
 import io.dodn.commerce.core.support.response.ApiResponse;
 import io.dodn.commerce.core.support.response.PageResponse;
@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class FavoriteController {
-    private final FavoriteService favoriteService;
     private final FavoriteFacade favoriteFacade;
 
     @GetMapping("/v1/favorites")
     public ApiResponse<PageResponse<FavoriteResponse>> getFavorites(
             User user,
+            @RequestParam(required = false, defaultValue = "PRODUCT") FavoriteTargetType targetType,
             @RequestParam Integer offset,
             @RequestParam Integer limit
     ) {
-        var page = favoriteFacade.getFavorites(user, OffsetLimit.of(offset, limit));
+        var page = favoriteFacade.getFavorites(user, targetType, OffsetLimit.of(offset, limit));
         return ApiResponse.success(PageResponse.of(page.content(), page.hasNext()));
     }
 
