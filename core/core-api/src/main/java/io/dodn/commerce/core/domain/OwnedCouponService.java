@@ -1,110 +1,36 @@
 package io.dodn.commerce.core.domain;
 
-import io.dodn.commerce.core.enums.EntityStatus;
-import io.dodn.commerce.core.enums.OwnedCouponState;
-import io.dodn.commerce.core.support.error.CoreException;
-import io.dodn.commerce.core.support.error.ErrorType;
-import io.dodn.commerce.storage.db.core.CouponEntity;
-import io.dodn.commerce.storage.db.core.CouponRepository;
-import io.dodn.commerce.storage.db.core.OwnedCouponEntity;
-import io.dodn.commerce.storage.db.core.OwnedCouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OwnedCouponService {
-    private final CouponRepository couponRepository;
-    private final OwnedCouponRepository ownedCouponRepository;
+    private final OwnedCouponReader ownedCouponReader;
+    private final CouponDownloader couponDownloader;
+    private final CouponTargetReader couponTargetReader;
 
     public List<OwnedCoupon> getOwnedCoupons(User user) {
-        List<OwnedCouponEntity> ownedCoupons = ownedCouponRepository.findByUserIdAndStatus(user.id(), EntityStatus.ACTIVE);
-        if (ownedCoupons.isEmpty()) {
-            return List.of();
-        }
-
-        Map<Long, CouponEntity> couponMap = couponRepository.findAllById(
-                        ownedCoupons.stream()
-                                .map(OwnedCouponEntity::getCouponId)
-                                .collect(Collectors.toSet())
-                ).stream()
-                .collect(Collectors.toMap(CouponEntity::getId, c -> c));
-
-        return ownedCoupons.stream()
-                .map(it -> {
-                    CouponEntity coupon = couponMap.get(it.getCouponId());
-                    return new OwnedCoupon(
-                            it.getId(),
-                            it.getUserId(),
-                            it.getState(),
-                            new Coupon(
-                                    coupon.getId(),
-                                    coupon.getName(),
-                                    coupon.getType(),
-                                    coupon.getDiscount(),
-                                    coupon.getExpiredAt()
-                            )
-                    );
-                })
-                .toList();
+        return ownedCouponReader.getOwnedCoupons(user.id());
     }
 
     public void download(User user, Long couponId) {
-        CouponEntity coupon = couponRepository.findByIdAndStatusAndExpiredAtAfter(couponId, EntityStatus.ACTIVE, LocalDateTime.now())
-                .orElseThrow(() -> new CoreException(ErrorType.COUPON_NOT_FOUND_OR_EXPIRED));
-
-        ownedCouponRepository.findByUserIdAndCouponId(user.id(), couponId)
-                .orElseThrow(() -> new CoreException(ErrorType.COUPON_ALREADY_DOWNLOADED));
-
-        ownedCouponRepository.save(
-                OwnedCouponEntity.create(
-                        user.id(),
-                        coupon.getId(),
-                        OwnedCouponState.DOWNLOADED
-                )
-        );
+        couponDownloader.download(user.id(), couponId);
     }
 
     public List<OwnedCoupon> getOwnedCouponsForCheckout(User user, Collection<Long> productIds) {
-        if (productIds.isEmpty()) {
-            return List.of();
-        }
+        if (productIds.isEmpty()) return List.of();
 
-        Map<Long, CouponEntity> applicableCouponMap = couponRepository.findApplicableCouponIds(productIds)
-                .stream()
-                .collect(Collectors.toMap(CouponEntity::getId, c -> c));
-        if (applicableCouponMap.isEmpty()) {
-            return List.of();
-        }
+        // 1. 상품에 적용 가능한 쿠폰 ID 조회 (타겟팅 로직)
+        Set<Long> applicableCouponIds = couponTargetReader.findCouponIdsByProductIds(productIds);
+        if (applicableCouponIds.isEmpty()) return List.of();
 
-        List<OwnedCouponEntity> ownedCoupons = ownedCouponRepository.findOwnedCouponIds(user.id(), applicableCouponMap.keySet(), LocalDateTime.now());
-        if (ownedCoupons.isEmpty()) {
-            return List.of();
-        }
-
-        return ownedCoupons.stream()
-                .map(it -> {
-                    CouponEntity coupon = applicableCouponMap.get(it.getCouponId());
-                    return new OwnedCoupon(
-                            it.getId(),
-                            it.getUserId(),
-                            it.getState(),
-                            new Coupon(
-                                    coupon.getId(),
-                                    coupon.getName(),
-                                    coupon.getType(),
-                                    coupon.getDiscount(),
-                                    coupon.getExpiredAt()
-                            )
-                    );
-                })
-                .toList();
+        // 2. 사용자가 소유한 쿠폰 중 적용 가능한 쿠폰 조회
+        return ownedCouponReader.findOwnedForCheckout(user, applicableCouponIds, LocalDateTime.now());
     }
 }
