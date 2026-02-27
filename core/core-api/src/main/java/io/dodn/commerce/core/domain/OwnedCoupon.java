@@ -6,6 +6,7 @@ public record OwnedCoupon(
         Long id,
         Long userId,
         OwnedCouponState state,
-        Coupon coupon
+        Coupon coupon,
+        Integer remainingUses
 ) {
 }

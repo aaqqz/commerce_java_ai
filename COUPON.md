@@ -68,8 +68,8 @@
   - `OwnedCouponEntity`
     - 현재: `state`(DOWNLOADED/USED), `@Version` 있음, (userId, couponId) 유니크 인덱스.
     - 추가 필드:
-      - `totalUses: Int` 발급된 총 사용 가능 횟수
-      - `usedCount: Int` 사용된 횟수(기본 0)
+      - `Integer totalUses` 발급된 총 사용 가능 횟수
+      - `Integer usedCount` 사용된 횟수(기본 0)
     - 비즈니스 메서드:
       - `useOne()` → 낙관적 락(@Version) 하에 `usedCount++`, 잔여 0이면 상태 전이.
       - `revertOne()` 환불/취소 시 `usedCount--` 처리.

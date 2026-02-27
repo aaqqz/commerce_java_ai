@@ -18,19 +18,20 @@ public record PaymentDiscount(
             List<OwnedCoupon> ownedCoupons,
             PointBalance pointBalance,
             Long useOwnedCouponId,
-            BigDecimal usePointAmount
+            BigDecimal usePointAmount,
+            BigDecimal orderAmount
     ) {
         this(
                 ownedCoupons,
                 pointBalance,
                 useOwnedCouponId,
                 usePointAmount,
-                calculateCouponDiscount(ownedCoupons, useOwnedCouponId),
+                calculateCouponDiscount(ownedCoupons, useOwnedCouponId, orderAmount),
                 calculateUsePoint(pointBalance, usePointAmount)
         );
     }
 
-    private static BigDecimal calculateCouponDiscount(List<OwnedCoupon> ownedCoupons, Long useOwnedCouponId) {
+    private static BigDecimal calculateCouponDiscount(List<OwnedCoupon> ownedCoupons, Long useOwnedCouponId, BigDecimal orderAmount) {
         if (useOwnedCouponId <= 0) {
             return BigDecimal.ZERO;
         }
@@ -39,7 +40,7 @@ public record PaymentDiscount(
                 .filter(c -> c.id().equals(useOwnedCouponId))
                 .findFirst()
                 .orElseThrow(() -> new CoreException(ErrorType.OWNED_COUPON_INVALID));
-        return ownedCoupon.coupon().discount();
+        return CouponDiscountCalculator.calculate(ownedCoupon.coupon(), orderAmount);
     }
 
     private static BigDecimal calculateUsePoint(PointBalance pointBalance, BigDecimal usePointAmount) {

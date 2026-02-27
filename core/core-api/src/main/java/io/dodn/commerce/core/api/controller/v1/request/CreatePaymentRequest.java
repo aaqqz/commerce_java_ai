@@ -12,12 +12,13 @@ public record CreatePaymentRequest(
         Long useOwnedCouponId,
         BigDecimal usePoint
 ) {
-    public PaymentDiscount toPaymentDiscount(List<OwnedCoupon> ownedCoupons, PointBalance pointBalance) {
+    public PaymentDiscount toPaymentDiscount(List<OwnedCoupon> ownedCoupons, PointBalance pointBalance, BigDecimal orderAmount) {
         return new PaymentDiscount(
                 ownedCoupons,
                 pointBalance,
                 useOwnedCouponId != null ? useOwnedCouponId : -1L,
-                usePoint != null ? usePoint : BigDecimal.valueOf(-1)
+                usePoint != null ? usePoint : BigDecimal.valueOf(-1),
+                orderAmount
         );
     }
 }

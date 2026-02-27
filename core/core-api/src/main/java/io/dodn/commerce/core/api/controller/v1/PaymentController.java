@@ -33,7 +33,7 @@ public class PaymentController {
         var pointBalance = pointService.balance(user);
         Long id = paymentService.createPayment(
                 order,
-                request.toPaymentDiscount(ownedCoupons, pointBalance)
+                request.toPaymentDiscount(ownedCoupons, pointBalance, order.totalPrice())
         );
 
         return ApiResponse.success(new CreatePaymentResponse(id));

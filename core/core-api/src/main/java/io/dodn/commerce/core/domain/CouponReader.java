@@ -24,7 +24,10 @@ public class CouponReader {
                         it.getName(),
                         it.getType(),
                         it.getDiscount(),
-                        it.getExpiredAt()
+                        it.getExpiredAt(),
+                        it.getMaxDiscountAmount(),
+                        it.getMinOrderAmount(),
+                        it.getUsesPerDownload()
                 ))
                 .toList();
     }

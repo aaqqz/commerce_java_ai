@@ -1,5 +1,6 @@
 package io.dodn.commerce.core.enums;
 
 public enum CouponType {
-    FIXED_AMOUNT
+    FIXED_AMOUNT,
+    PERCENT_RATE
 }

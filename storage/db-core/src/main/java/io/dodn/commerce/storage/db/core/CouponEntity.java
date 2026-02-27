@@ -23,12 +23,33 @@ public class CouponEntity extends BaseEntity {
     private BigDecimal discount;
     private LocalDateTime expiredAt;
 
+    private BigDecimal maxDiscountAmount;
+    private BigDecimal minOrderAmount;
+
+    @Column(nullable = false)
+    private Integer usesPerDownload = 1;
+
     public static CouponEntity create(String name, CouponType type, BigDecimal discount, LocalDateTime expiredAt) {
         CouponEntity coupon = new CouponEntity();
         coupon.name = name;
         coupon.type = type;
         coupon.discount = discount;
         coupon.expiredAt = expiredAt;
+        coupon.usesPerDownload = 1;
+
+        return coupon;
+    }
+
+    public static CouponEntity create(String name, CouponType type, BigDecimal discount, LocalDateTime expiredAt,
+                                      BigDecimal maxDiscountAmount, BigDecimal minOrderAmount, Integer usesPerDownload) {
+        CouponEntity coupon = new CouponEntity();
+        coupon.name = name;
+        coupon.type = type;
+        coupon.discount = discount;
+        coupon.expiredAt = expiredAt;
+        coupon.maxDiscountAmount = maxDiscountAmount;
+        coupon.minOrderAmount = minOrderAmount;
+        coupon.usesPerDownload = usesPerDownload != null ? usesPerDownload : 1;
 
         return coupon;
     }

@@ -30,21 +30,52 @@ public class OwnedCouponEntity extends BaseEntity {
     @Version
     private Long version;
 
+    private Integer totalUses;
+    private Integer usedCount = 0;
+
     public static OwnedCouponEntity create(Long userId, Long couponId, OwnedCouponState state) {
+        return create(userId, couponId, state, 1);
+    }
+
+    public static OwnedCouponEntity create(Long userId, Long couponId, OwnedCouponState state, Integer totalUses) {
         OwnedCouponEntity ownedCoupon = new OwnedCouponEntity();
         ownedCoupon.userId = userId;
         ownedCoupon.couponId = couponId;
         ownedCoupon.state = state;
         ownedCoupon.version = 0L;
+        ownedCoupon.totalUses = totalUses != null ? totalUses : 1;
+        ownedCoupon.usedCount = 0;
 
         return ownedCoupon;
     }
 
+    // TODO: 기존 단회권 호환용 - 추후 useOne()으로 마이그레이션 예정
     public void use() {
         this.state = OwnedCouponState.USED;
     }
 
+    // TODO: 기존 단회권 호환용 - 추후 revertOne()으로 마이그레이션 예정
     public void revert() {
         this.state = OwnedCouponState.DOWNLOADED;
+    }
+
+    public void useOne() {
+        this.usedCount++;
+        if (this.usedCount >= this.totalUses) {
+            this.state = OwnedCouponState.EXHAUSTED;
+        }
+    }
+
+    public void revertOne() {
+        if (this.usedCount > 0) {
+            this.usedCount--;
+        }
+        if (this.state == OwnedCouponState.EXHAUSTED) {
+            this.state = OwnedCouponState.DOWNLOADED;
+        }
+    }
+
+    public int remainingUses() {
+        return this.totalUses - this.usedCount;
     }
 }

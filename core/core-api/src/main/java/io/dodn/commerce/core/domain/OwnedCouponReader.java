@@ -43,8 +43,12 @@ public class OwnedCouponReader {
                                     coupon.getName(),
                                     coupon.getType(),
                                     coupon.getDiscount(),
-                                    coupon.getExpiredAt()
-                            )
+                                    coupon.getExpiredAt(),
+                                    coupon.getMaxDiscountAmount(),
+                                    coupon.getMinOrderAmount(),
+                                    coupon.getUsesPerDownload()
+                            ),
+                            it.remainingUses()
                     );
                 })
                 .toList();
@@ -80,8 +84,12 @@ public class OwnedCouponReader {
                                     coupon.getName(),
                                     coupon.getType(),
                                     coupon.getDiscount(),
-                                    coupon.getExpiredAt()
-                            )
+                                    coupon.getExpiredAt(),
+                                    coupon.getMaxDiscountAmount(),
+                                    coupon.getMinOrderAmount(),
+                                    coupon.getUsesPerDownload()
+                            ),
+                            it.remainingUses()
                     );
                 })
                 .toList();

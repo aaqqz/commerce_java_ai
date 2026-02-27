@@ -27,6 +27,6 @@ public class CouponDownloader {
             .orElseThrow(() -> new CoreException(ErrorType.COUPON_NOT_FOUND_OR_EXPIRED));
 
         // 소유 쿠폰 저장 (OwnedCouponAdder에 위임)
-        ownedCouponAdder.addIfNotExists(userId, coupon.getId());
+        ownedCouponAdder.addIfNotExists(userId, coupon.getId(), coupon.getUsesPerDownload());
     }
 }

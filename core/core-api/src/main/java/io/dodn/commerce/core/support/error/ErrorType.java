@@ -26,9 +26,11 @@ public enum ErrorType {
     // 쿠폰
     COUPON_NOT_FOUND_OR_EXPIRED(HttpStatus.BAD_REQUEST, ErrorCode.E4000, "쿠폰을 찾을 수 없거나 만료되었습니다.", LogLevel.INFO),
     COUPON_ALREADY_DOWNLOADED(HttpStatus.BAD_REQUEST, ErrorCode.E4001, "이미 다운로드한 쿠폰입니다.", LogLevel.INFO),
+    COUPON_INVALID_RATE(HttpStatus.BAD_REQUEST, ErrorCode.E4002, "쿠폰 할인율이 유효하지 않습니다.", LogLevel.INFO),
 
     // 소유 쿠폰
     OWNED_COUPON_INVALID(HttpStatus.BAD_REQUEST, ErrorCode.E5000, "사용할 수 없는 쿠폰입니다.", LogLevel.INFO),
+    OWNED_COUPON_NO_REMAINING_USES(HttpStatus.BAD_REQUEST, ErrorCode.E5001, "사용 가능한 횟수가 없습니다.", LogLevel.INFO),
 
     // 포인트
     POINT_EXCEEDS_BALANCE(HttpStatus.BAD_REQUEST, ErrorCode.E6000, "보유 포인트를 초과하여 사용할 수 없습니다.", LogLevel.INFO),
