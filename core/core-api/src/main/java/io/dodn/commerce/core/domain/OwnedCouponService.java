@@ -15,12 +15,12 @@ public class OwnedCouponService {
     private final CouponDownloader couponDownloader;
     private final CouponTargetReader couponTargetReader;
 
-    public List<OwnedCoupon> getOwnedCoupons(User user) {
-        return ownedCouponReader.getOwnedCoupons(user.id());
-    }
-
     public void download(User user, Long couponId) {
         couponDownloader.download(user.id(), couponId);
+    }
+
+    public List<OwnedCoupon> getOwnedCoupons(User user) {
+        return ownedCouponReader.getOwnedCoupons(user.id());
     }
 
     public List<OwnedCoupon> getOwnedCouponsForCheckout(User user, Collection<Long> productIds) {
